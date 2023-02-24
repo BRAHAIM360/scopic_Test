@@ -1,8 +1,31 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+
+  //swagger config
+  const SwaggerConfig = new DocumentBuilder()
+    .setTitle("SEAO API")
+    .setDescription("SEOR CRUD API")
+    .setVersion("1.0")
+    .addTag("SEOR API")
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        name: "JWT",
+        description: "Enter JWT token",
+        in: "header",
+      },
+      "JWT",
+    )
+    .build();
+  const document = SwaggerModule.createDocument(app, SwaggerConfig);
+  SwaggerModule.setup("swagger", app, document);
+
+  await app.listen(3333);
 }
 bootstrap();
