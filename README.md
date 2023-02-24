@@ -1,4 +1,4 @@
-# Scandiweb Test Assignment
+# SCOPIC Test
 
 SCOPIC Logo
 ![SCOPIC](/client/public/images/logo.png)
