@@ -55,6 +55,11 @@ yarn start:dev // to start the backend
 ```
 
 The backend will be available at <http://localhost:3333>
+and the swagger documentation at <http://localhost:3333/swagger>
+
+to start the backend
+
+- Go to the project client folder:
 
 ```sh
 cd frontend
