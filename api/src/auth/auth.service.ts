@@ -27,12 +27,12 @@ export class AuthService {
         },
       });
       //if user does not exist throw excepetion
-      if (!user) throw new ForbiddenException("Credential not correct");
+      if (!user) throw "Credential not correct";
 
       //compare password
       const pwMatches = await argon.verify(user.password, dto.password);
       //if password incorect throw exeption
-      if (!pwMatches) throw new ForbiddenException("Credential not correct");
+      if (!pwMatches) throw "Credential not correct";
 
       //send back the user
       //delete user.hash;
@@ -46,12 +46,12 @@ export class AuthService {
 
   async me(userid: number) {
     try {
-      //find the user by username
       const user = await this.prisma.user.findFirst({
         where: {
           id: userid,
         },
       });
+      delete user.password;
       return user;
     } catch (error) {
       console.log(error);
@@ -65,7 +65,7 @@ export class AuthService {
       username,
     };
     const access_token = await this.jwt.signAsync(jwtPayload, {
-      secret: this.config.get<string>("AT_SECRET"),
+      secret: this.config.get("SECRET"),
       // expiresIn: "3h",
     });
 

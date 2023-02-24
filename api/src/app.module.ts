@@ -6,6 +6,9 @@ import { ConfigModule } from "@nestjs/config";
 import { MulterModule } from "@nestjs/platform-express";
 import { JwtModule } from "@nestjs/jwt";
 import { ItemModule } from "./item/item.module";
+import { AuthModule } from "./auth/auth.module";
+import { APP_GUARD } from "@nestjs/core";
+import { AtGuard } from "./common/guard";
 
 @Module({
   imports: [
@@ -14,8 +17,9 @@ import { ItemModule } from "./item/item.module";
     MulterModule.register({ dest: "./uploads" }),
     PrismaModule,
     ItemModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: AtGuard }],
 })
 export class AppModule {}

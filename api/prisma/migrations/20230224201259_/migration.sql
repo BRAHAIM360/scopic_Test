@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "balance" INTEGER NOT NULL DEFAULT 1000,
+ADD COLUMN     "isAdmin" BOOLEAN NOT NULL DEFAULT false;
