@@ -7,10 +7,10 @@ async function bootstrap() {
 
   //swagger config
   const SwaggerConfig = new DocumentBuilder()
-    .setTitle("SEAO API")
-    .setDescription("SEOR CRUD API")
+    .setTitle("SCOPIC API")
+    .setDescription("SCOPIC CRUD API")
     .setVersion("1.0")
-    .addTag("SEOR API")
+    .addTag("SCOPIC API")
     .addBearerAuth(
       {
         type: "http",
