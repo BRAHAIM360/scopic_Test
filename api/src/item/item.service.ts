@@ -1,13 +1,16 @@
-import { Injectable } from "@nestjs/common";
+import { QueryItemDto } from "./dto/query-item.dto";
+import { query } from "express";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateItemDto } from "./dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  uploadImage(file: Express.Multer.File) {
-    const link = `/uploads/${file.filename}`;
+  uploadImage(image: Express.Multer.File) {
+    const link = `/uploads/${image.filename}`;
     return link;
   }
 
@@ -18,9 +21,41 @@ export class ItemService {
     return item;
   }
 
-  async getItems() {
-    const items = await this.prisma.item.findMany({});
-    return items;
+  async getItems(query: QueryItemDto) {
+    let { take, page, description, name, order, sort_by } = query;
+    take = take || 10;
+    page = page || 1;
+    if (page && page <= 0) throw new BadRequestException("Page shold not be negative or zero ");
+
+    const skip = page && take ? take * (page - 1) : undefined;
+
+    const where: Prisma.itemWhereInput = {
+      name: {
+        contains: name,
+        mode: "insensitive",
+      },
+
+      description: {
+        contains: description,
+        mode: "insensitive",
+      },
+    };
+    const orderBy: Prisma.itemOrderByWithAggregationInput = {
+      [sort_by]: order,
+    };
+    const [items, recordsTotal] = await Promise.all([
+      this.prisma.item.findMany({ where, orderBy, skip, take }),
+      this.prisma.item.count({ where }),
+    ]);
+    console.log(take);
+    const pageinfo = {
+      page: page | 0,
+      pages: Math.ceil(recordsTotal / take),
+      recordsDisplay: items.length,
+      recordsTotal,
+    };
+
+    return { items, pageinfo };
   }
 
   async getItem(itemId: number) {

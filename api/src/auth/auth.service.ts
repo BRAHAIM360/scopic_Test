@@ -1,12 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "./../prisma/prisma.service";
 import * as argon from "argon2";
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { AuthDto } from "./dto";
 import { JwtService } from "@nestjs/jwt";
 import { Tokens } from "./types";
@@ -34,8 +29,6 @@ export class AuthService {
       //if password incorect throw exeption
       if (!pwMatches) throw "Credential not correct";
 
-      //send back the user
-      //delete user.hash;
       const tokens = await this.getTotken(user.id, user.username);
       return tokens;
     } catch (error) {

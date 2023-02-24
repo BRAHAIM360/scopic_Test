@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
 } from "@nestjs/common";
 import {
@@ -20,6 +21,7 @@ import { ApiFile } from "src/common/decorator/api-file.decorator";
 import { ParseFile } from "src/common/decorator/parse-file.pipe";
 import { UpdateItemDto } from "./dto";
 import { ItemService } from "./item.service";
+import { QueryItemDto } from "./dto/query-item.dto";
 
 @Controller("items")
 export class AppController {
@@ -35,8 +37,8 @@ export class AppController {
   @Get()
   @ApiOkResponse({ description: "The resource has been successfully returned" })
   @ApiBadRequestResponse({ description: "Bad Request" })
-  getItems() {
-    return this.itemService.getItems();
+  getItems(@Query() query: QueryItemDto) {
+    return this.itemService.getItems(query);
   }
 
   @Get(":id")
@@ -64,7 +66,7 @@ export class AppController {
   @ApiCreatedResponse({ description: "The resource has been successfully created" })
   @ApiNotFoundResponse({ description: "Bad Request" })
   @ApiFile("image", true)
-  async uploadImage(@UploadedFile(ParseFile) csv: Express.Multer.File) {
-    return this.itemService.uploadImage(csv);
+  uploadImage(@UploadedFile(ParseFile) image: Express.Multer.File) {
+    return this.itemService.uploadImage(image);
   }
 }
