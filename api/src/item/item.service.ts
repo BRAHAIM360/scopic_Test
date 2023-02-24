@@ -22,24 +22,31 @@ export class ItemService {
   }
 
   async getItems(query: QueryItemDto) {
-    let { take, page, description, name, order, sort_by } = query;
+    let { take, page, search, order, sort_by } = query;
     take = take || 10;
     page = page || 1;
     if (page && page <= 0) throw new BadRequestException("Page shold not be negative or zero ");
 
     const skip = page && take ? take * (page - 1) : undefined;
 
-    const where: Prisma.itemWhereInput = {
-      name: {
-        contains: name,
-        mode: "insensitive",
-      },
-
-      description: {
-        contains: description,
-        mode: "insensitive",
-      },
-    };
+    const where: Prisma.itemWhereInput = search
+      ? {
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          ],
+        }
+      : {};
     const orderBy: Prisma.itemOrderByWithAggregationInput = {
       [sort_by]: order,
     };
@@ -47,7 +54,6 @@ export class ItemService {
       this.prisma.item.findMany({ where, orderBy, skip, take }),
       this.prisma.item.count({ where }),
     ]);
-    console.log(take);
     const pageinfo = {
       page: page | 0,
       pages: Math.ceil(recordsTotal / take),

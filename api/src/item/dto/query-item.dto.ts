@@ -5,23 +5,17 @@ import { QueryPage } from "src/common/page/query-args.dto";
 export class QueryItemDto extends QueryPage {
   @ApiProperty({
     type: String,
-    description: "Name of the item",
+    description: "search item",
+    required: false,
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
-
-  @ApiProperty({
-    type: String,
-    description: "Description of the item",
-  })
-  @IsString()
-  @IsNotEmpty()
-  description: string;
+  search: string;
 
   @ApiProperty({
     type: String,
     description: "sort item by",
+    required: false,
   })
   @IsString()
   @IsNotEmpty()
@@ -29,7 +23,8 @@ export class QueryItemDto extends QueryPage {
 
   @ApiProperty({
     type: String,
-    description: "order of the sorting ASC/DESC",
+    description: "order of the sorting asc/desc",
+    required: false,
   })
   @IsString()
   @IsNotEmpty()
