@@ -1,7 +1,7 @@
 # Scandiweb Test Assignment
 
-Scandiweb Logo
-![SCANDIWEB](/client/public/logo.png)
+SCOPIC Logo
+![SCOPIC](/client/images/public/logo.png)
 
 ## Meta
 
@@ -43,21 +43,23 @@ The App will be available at <http://localhost:9000>
 
 if you want try it in development mode
 
-- Go to the project root:
-
-```sh
-cd scandiweb-test
-docker-compose up
-```
-
 to start the backend
 
-- Go to the frontend folder:
+- Go to the project api folder:
+
+```sh
+cd api
+yarn // to install the dependencies
+yarn db:dev:up // to start the database
+yarn start:dev // to start the backend
+```
+
+The backend will be available at <http://localhost:3333>
 
 ```sh
 cd frontend
-yarn
-yarn start
+yarn // to install the dependencies
+yarn dev // to start the frontend
 ```
 
 The frontend will be available at <http://localhost:3000>
