@@ -1,7 +1,7 @@
 # Scandiweb Test Assignment
 
 SCOPIC Logo
-![SCOPIC](/client/images/public/logo.png)
+![SCOPIC](/client/public/images/logo.png)
 
 ## Meta
 
