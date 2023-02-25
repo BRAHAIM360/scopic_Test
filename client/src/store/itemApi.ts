@@ -18,7 +18,7 @@ export const itemApi = createApi({
     }),
 
     getItem: builder.query({
-      query: (id) => `/directions/${id}`,
+      query: (id) => `/items/${id}`,
       providesTags: ["Items"],
     }),
 

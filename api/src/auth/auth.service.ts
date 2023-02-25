@@ -29,7 +29,7 @@ export class AuthService {
       //if password incorect throw exeption
       if (!pwMatches) throw "Credential not correct";
 
-      const tokens = await this.getTotken(user.id, user.username);
+      const tokens = await this.getTotken(user.id, user.username, user.isAdmin);
       return tokens;
     } catch (error) {
       console.log(error);
@@ -52,10 +52,11 @@ export class AuthService {
     }
   }
 
-  async getTotken(userId: number, username: string): Promise<Tokens> {
+  async getTotken(userId: number, username: string, isAdmin: boolean): Promise<Tokens> {
     const jwtPayload = {
       sub: userId,
       username,
+      isAdmin,
     };
     const access_token = await this.jwt.signAsync(jwtPayload, {
       secret: this.config.get("SECRET"),

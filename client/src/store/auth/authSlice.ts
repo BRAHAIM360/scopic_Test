@@ -6,6 +6,7 @@ import authService from "./authService";
 const user = JSON.parse(localStorage.getItem("user") || "{}");
 const initialState = {
   isLogged: user.access_token ? true : false,
+  isAdmin: user.isAdmin ? user.isAdmin : false,
   isError: false,
   isSuccess: false,
   isLoading: false,
