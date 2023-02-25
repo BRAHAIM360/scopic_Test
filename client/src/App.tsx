@@ -1,10 +1,6 @@
 import React from "react"
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AdminPage } from "./pages/AdminPage";
-import { Dumy } from "./pages/dumyPage";
-import { Home } from "./pages/Home";
-import { ItemDetails } from "./pages/ItemDetails";
-import { Login } from "./pages/Login";
+import { AdminPage, Home, ItemDetails, Login } from "./pages";
 import { RootState, useAppSelector } from "./store";
 
 
