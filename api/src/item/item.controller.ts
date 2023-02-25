@@ -22,8 +22,10 @@ import { ParseFile } from "src/common/decorator/parse-file.pipe";
 import { UpdateItemDto } from "./dto";
 import { ItemService } from "./item.service";
 import { QueryItemDto } from "./dto/query-item.dto";
+import { Public } from "src/common/decorator";
 
 @Controller("items")
+@Public()
 export class AppController {
   constructor(private readonly itemService: ItemService) {}
 

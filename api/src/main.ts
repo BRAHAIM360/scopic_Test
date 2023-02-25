@@ -4,9 +4,11 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
 
   //swagger config
   const SwaggerConfig = new DocumentBuilder()
+
     .setTitle("SCOPIC API")
     .setDescription("SCOPIC CRUD API")
     .setVersion("1.0")
