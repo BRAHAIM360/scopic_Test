@@ -29,6 +29,7 @@ async function main() {
           "$argon2id$v=19$m=65536,t=3,p=4$lO7/Z3/A+3yFfEyFrE4Gww$j1c2+GYbwaGYV1oJxEyVYB04PbEtsklg2OB/C4eNaHQ",
       },
     ],
+    skipDuplicates: true,
   });
 }
 
