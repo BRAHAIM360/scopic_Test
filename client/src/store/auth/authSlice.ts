@@ -27,7 +27,7 @@ export const login = createAsyncThunk(
       } else if ([500].includes(error?.response?.status)) {
         message = "Internal Server Error";
       } else {
-        message = "Network Error, Please Connect to the internet.";
+        message = "Username or password is incorrect";
       }
       return thunkAPI.rejectWithValue(message);
     }
