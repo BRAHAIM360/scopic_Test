@@ -10,40 +10,36 @@ import {
   Post,
   Query,
   UploadedFile,
+  Res,
+  ForbiddenException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiTags,
 } from "@nestjs/swagger";
+import { Response } from "express";
+
 import { ApiFile } from "src/common/decorator/api-file.decorator";
 import { ParseFile } from "src/common/decorator/parse-file.pipe";
-import { CreateBidDto, UpdateItemDto } from "./dto";
+import { UpdateItemDto } from "./dto";
 import { ItemService } from "./item.service";
 import { QueryItemDto } from "./dto/query-item.dto";
 import { GetUserId, Public } from "src/common/decorator";
+import { GetIsAdmin } from "src/common/decorator/isAdmin-decorator";
 
+@ApiTags("items")
 @Controller("items")
-@Public()
-export class AppController {
+export class ItemController {
   constructor(private readonly itemService: ItemService) {}
-
-  @Post(":id/bid")
-  @ApiCreatedResponse({ description: "The resource has been successfully created" })
-  @ApiBadRequestResponse({ description: "Bad Request" })
-  createBid(
-    @GetUserId() userId: number,
-    @Body() dto: CreateBidDto,
-    @Param("id", ParseIntPipe) itemId: number,
-  ) {
-    return this.itemService.createBid(userId, itemId, dto);
-  }
 
   @Post()
   @ApiCreatedResponse({ description: "The resource has been successfully created" })
   @ApiBadRequestResponse({ description: "Bad Request" })
-  createItem(@Body() dto: CreateItemDto) {
+  createItem(@GetIsAdmin() isAdmin: boolean, @Body() dto: CreateItemDto) {
+    if (!isAdmin) throw new ForbiddenException("action not allowed");
     return this.itemService.createItem(dto);
   }
 
@@ -64,22 +60,20 @@ export class AppController {
   @Patch(":id")
   @ApiCreatedResponse({ description: "The resource has been successfully updated" })
   @ApiBadRequestResponse({ description: "Bad Request" })
-  editItemById(@Param("id", ParseIntPipe) ItemId: number, @Body() dto: UpdateItemDto) {
+  editItemById(
+    @GetIsAdmin() isAdmin: boolean,
+    @Param("id", ParseIntPipe) ItemId: number,
+    @Body() dto: UpdateItemDto,
+  ) {
+    if (!isAdmin) throw new ForbiddenException("Action not allowed");
     return this.itemService.editItemById(ItemId, dto);
   }
 
   @Delete(":id")
   @ApiOkResponse({ description: "The resource has been successfully deleted" })
   @ApiBadRequestResponse({ description: "Bad Request" })
-  deleteItemById(@Param("id", ParseIntPipe) ItemId: number) {
+  deleteItemById(@GetIsAdmin() isAdmin: boolean, @Param("id", ParseIntPipe) ItemId: number) {
+    if (!isAdmin) throw new ForbiddenException("Action not allowed");
     return this.itemService.deleteItemById(ItemId);
-  }
-
-  @Post("upload")
-  @ApiCreatedResponse({ description: "The resource has been successfully created" })
-  @ApiNotFoundResponse({ description: "Bad Request" })
-  @ApiFile("image", true)
-  uploadImage(@UploadedFile(ParseFile) image: Express.Multer.File) {
-    return this.itemService.uploadImage(image);
   }
 }

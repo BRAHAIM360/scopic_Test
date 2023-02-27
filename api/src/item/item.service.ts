@@ -1,45 +1,15 @@
+import { AutobiddingDto } from "../bid/dto/autobidding.dto";
 import { UpdateItemDto } from "./dto/update-item.dto";
 import { QueryItemDto } from "./dto/query-item.dto";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateBidDto, CreateItemDto } from "./dto";
+import { CreateItemDto } from "./dto";
+
 import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class ItemService {
   constructor(private prisma: PrismaService) {}
-
-  uploadImage(image: Express.Multer.File) {
-    const link = `/uploads/${image.filename}`;
-    return { image: link };
-  }
-
-  async createBid(userId: number, itemId: number, dto: CreateBidDto) {
-    const item = await this.prisma.item.findUnique({
-      where: {
-        id: itemId,
-      },
-    });
-    if (!item) throw new BadRequestException("Item not found");
-    if (item.start_price > dto.amount) throw new BadRequestException("Price is too low");
-
-    const bid = await this.prisma.bid.create({
-      data: {
-        bid_price: dto.amount,
-        item: {
-          connect: {
-            id: itemId,
-          },
-        },
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-      },
-    });
-    return bid;
-  }
 
   async createItem(data: CreateItemDto) {
     const item = await this.prisma.item.create({
@@ -77,10 +47,26 @@ export class ItemService {
     const orderBy: Prisma.ItemOrderByWithAggregationInput = {
       [sort_by]: order,
     };
-    const [items, recordsTotal] = await Promise.all([
-      this.prisma.item.findMany({ where, orderBy, skip, take }),
+    const [items, recordsTotal]: any = await Promise.all([
+      this.prisma.item.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          bid: {
+            orderBy: { createdAt: "desc" },
+            include: { user: { select: { username: true } } },
+          },
+        },
+      }),
       this.prisma.item.count({ where }),
     ]);
+    items.forEach(item => {
+      item.usernameLastBid = item.bid.length > 0 ? item.bid[0]?.user?.username : null;
+      delete item.bid;
+    });
+
     const pageinfo = {
       page: page | 0,
       pages: Math.ceil(recordsTotal / take),
