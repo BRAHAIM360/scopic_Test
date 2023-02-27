@@ -30,12 +30,4 @@ export class AuthController {
   signin(@Body() dto: AuthDto): Promise<Tokens> {
     return this.AuthService.signin(dto);
   }
-
-  @ApiCreatedResponse({ description: "The resource has been successfully returned" })
-  @ApiBadRequestResponse({ description: "Bad Request" })
-  @HttpCode(HttpStatus.OK)
-  @Get("me")
-  me(@GetUserId() userId: number) {
-    return this.AuthService.me(userId);
-  }
 }

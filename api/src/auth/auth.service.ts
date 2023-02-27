@@ -37,21 +37,6 @@ export class AuthService {
     }
   }
 
-  async me(userid: number) {
-    try {
-      const user = await this.prisma.user.findFirst({
-        where: {
-          id: userid,
-        },
-      });
-      delete user.password;
-      return user;
-    } catch (error) {
-      console.log(error);
-      throw new ForbiddenException(error);
-    }
-  }
-
   async getTotken(userId: number, username: string, isAdmin: boolean): Promise<Tokens> {
     const jwtPayload = {
       sub: userId,
