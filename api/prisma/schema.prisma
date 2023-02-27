@@ -11,14 +11,16 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  username     String         @unique
-  password     String
-  isAdmin      Boolean        @default(false)
-  bid          bid[]
-  bid_amount   Int            @default(0)
-  bid_alert    Int            @default(90)
-  Notification Notification[]
+  id               Int            @id @default(autoincrement())
+  username         String         @unique
+  password         String
+  isAdmin          Boolean        @default(false)
+  bid              bid[]
+  bid_amount       Int            @default(0)
+  max_bid          Int            @default(0)
+  bid_alert        Int            @default(90)
+  Notification     Notification[]
+  autobiddingItems Item[]
 
   @@map("users")
 }
@@ -35,17 +37,18 @@ model Notification {
 }
 
 model Item {
-  id            Int       @id @default(autoincrement())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime? @updatedAt
-  name          String
-  description   String?
-  start_price   Int
-  image         String
-  starting_Date DateTime
-  ending_Date   DateTime
-  current_bid   Int
-  bid           bid[]
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
+  name            String
+  description     String?
+  start_price     Int
+  image           String
+  starting_Date   DateTime
+  ending_Date     DateTime
+  current_bid     Int
+  autoBidingUsers User[]
+  bid             bid[]
 
   @@map("items")
 }
@@ -58,6 +61,7 @@ model bid {
   user      User     @relation(fields: [user_id], references: [id])
   user_id   Int
   bid_price Int
+  autoBid   Boolean  @default(false)
 
   @@map("bids")
 }
