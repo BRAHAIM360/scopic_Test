@@ -12,7 +12,7 @@ export class Atstrategy extends PassportStrategy(Strategy, "jwt") {
       secretOrKey: config.get("SECRET"),
     });
   }
-  async validate(payload: { sub: number; email: string }) {
+  async validate(payload: { sub: number; username: string }) {
     return payload;
   }
 }
