@@ -11,46 +11,51 @@ datasource db {
 }
 
 model User {
-  id                Int                @id @default(autoincrement())
-  username          String             @unique
-  password          String
-  isAdmin           Boolean            @default(false)
-  bid               bid[]
-  AutoBiddingConfig AutoBiddingConfig?
+  id           Int            @id @default(autoincrement())
+  username     String         @unique
+  password     String
+  isAdmin      Boolean        @default(false)
+  bid          bid[]
+  bid_amount   Int            @default(0)
+  bid_alert    Int            @default(90)
+  Notification Notification[]
 
   @@map("users")
 }
 
-model AutoBiddingConfig {
-  id             Int  @id @default(autoincrement())
-  user           User @relation(fields: [user_id], references: [id])
-  user_id        Int  @unique
-  max_bid_amount Int
-  bid_alert      Int
+model Notification {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  message   String
+  isRead    Boolean  @default(false)
 
-  @@map("AutoBiddingConfig")
+  @@map("notifications")
 }
 
 model Item {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
-  name        String
-  description String?
-  start_price Int
-  image       String
-  bid         bid[]
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+  name          String
+  description   String?
+  start_price   Int
+  image         String
+  starting_Date DateTime
+  ending_Date   DateTime
+  current_bid   Int
+  bid           bid[]
 
   @@map("items")
 }
 
 model bid {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-  item      Item      @relation(fields: [item_id], references: [id])
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  item      Item     @relation(fields: [item_id], references: [id])
   item_id   Int
-  user      User      @relation(fields: [user_id], references: [id])
+  user      User     @relation(fields: [user_id], references: [id])
   user_id   Int
   bid_price Int
 
