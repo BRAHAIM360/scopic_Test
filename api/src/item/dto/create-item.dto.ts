@@ -37,4 +37,22 @@ export class CreateItemDto {
   @IsNumber()
   @IsNotEmpty()
   start_price: number;
+
+  @ApiProperty({
+    type: Date,
+    description: "starting date",
+    required: true,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  starting_Date: Date;
+
+  @ApiProperty({
+    type: Date,
+    description: "date end of the auction",
+    required: true,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  ending_Date: Date;
 }

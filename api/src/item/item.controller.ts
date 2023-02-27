@@ -19,15 +19,26 @@ import {
 } from "@nestjs/swagger";
 import { ApiFile } from "src/common/decorator/api-file.decorator";
 import { ParseFile } from "src/common/decorator/parse-file.pipe";
-import { UpdateItemDto } from "./dto";
+import { CreateBidDto, UpdateItemDto } from "./dto";
 import { ItemService } from "./item.service";
 import { QueryItemDto } from "./dto/query-item.dto";
-import { Public } from "src/common/decorator";
+import { GetUserId, Public } from "src/common/decorator";
 
 @Controller("items")
 @Public()
 export class AppController {
   constructor(private readonly itemService: ItemService) {}
+
+  @Post(":id/bid")
+  @ApiCreatedResponse({ description: "The resource has been successfully created" })
+  @ApiBadRequestResponse({ description: "Bad Request" })
+  createBid(
+    @GetUserId() userId: number,
+    @Body() dto: CreateBidDto,
+    @Param("id", ParseIntPipe) itemId: number,
+  ) {
+    return this.itemService.createBid(userId, itemId, dto);
+  }
 
   @Post()
   @ApiCreatedResponse({ description: "The resource has been successfully created" })

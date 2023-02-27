@@ -1,8 +1,8 @@
+import { UpdateItemDto } from "./dto/update-item.dto";
 import { QueryItemDto } from "./dto/query-item.dto";
-import { query } from "express";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateItemDto } from "./dto";
+import { CreateBidDto, CreateItemDto } from "./dto";
 import { Prisma } from "@prisma/client";
 
 @Injectable()
@@ -11,12 +11,39 @@ export class ItemService {
 
   uploadImage(image: Express.Multer.File) {
     const link = `/uploads/${image.filename}`;
-    return link;
+    return { image: link };
+  }
+
+  async createBid(userId: number, itemId: number, dto: CreateBidDto) {
+    const item = await this.prisma.item.findUnique({
+      where: {
+        id: itemId,
+      },
+    });
+    if (!item) throw new BadRequestException("Item not found");
+    if (item.start_price > dto.amount) throw new BadRequestException("Price is too low");
+
+    const bid = await this.prisma.bid.create({
+      data: {
+        bid_price: dto.amount,
+        item: {
+          connect: {
+            id: itemId,
+          },
+        },
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+    return bid;
   }
 
   async createItem(data: CreateItemDto) {
     const item = await this.prisma.item.create({
-      data,
+      data: { ...data, current_bid: data.start_price },
     });
     return item;
   }
@@ -29,7 +56,7 @@ export class ItemService {
 
     const skip = page && take ? take * (page - 1) : undefined;
 
-    const where: Prisma.itemWhereInput = search
+    const where: Prisma.ItemWhereInput = search
       ? {
           OR: [
             {
@@ -47,7 +74,7 @@ export class ItemService {
           ],
         }
       : {};
-    const orderBy: Prisma.itemOrderByWithAggregationInput = {
+    const orderBy: Prisma.ItemOrderByWithAggregationInput = {
       [sort_by]: order,
     };
     const [items, recordsTotal] = await Promise.all([
@@ -73,7 +100,7 @@ export class ItemService {
     return items;
   }
 
-  async editItemById(itemId: number, data: CreateItemDto) {
+  async editItemById(itemId: number, data: UpdateItemDto) {
     const item = await this.prisma.item.update({
       where: {
         id: itemId,
