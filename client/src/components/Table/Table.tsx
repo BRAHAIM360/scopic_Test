@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -23,8 +23,12 @@ import { visuallyHidden } from '@mui/utils';
 import { CustomButton } from '../Button/Button';
 import { CustomModal } from '../CustomModal/CustomModal';
 import { AddItem } from '../AddItem/AddItem';
+import { EditItem } from '../EditItem/EditItem';
+import { useGetItemsQuery } from '../../store/itemApi';
+import { useNavigate } from 'react-router-dom';
 
 interface Data {
+    id: number,
     name: string,
     current_bid: number,
     start_price: number,
@@ -34,6 +38,7 @@ interface Data {
 }
 
 function createData(
+    id: number,
     name: string,
     current_bid: number,
     start_price: number,
@@ -41,6 +46,7 @@ function createData(
     starting_Date: Date,
 ): Data {
     return {
+        id,
         name,
         current_bid,
         start_price,
@@ -49,13 +55,6 @@ function createData(
     };
 }
 
-const rows: Data[] = [
-    createData("item1", 1, 1, new Date(), new Date()),
-    createData("item2", 2, 5, new Date(), new Date()),
-    createData("item4", 3, 6, new Date(), new Date()),
-    createData("item5", 6, 7, new Date(), new Date()),
-
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -102,10 +101,12 @@ interface HeadCell {
 }
 
 const headCells: readonly HeadCell[] = [
+
+
     {
         id: 'name',
         numeric: false,
-        disablePadding: true,
+        disablePadding: false,
         label: 'Name',
     },
     {
@@ -117,13 +118,13 @@ const headCells: readonly HeadCell[] = [
     {
         id: 'current_bid',
         numeric: true,
-        disablePadding: false,
+        disablePadding: true,
         label: 'Current bid',
     },
     {
         id: 'starting_Date',
         numeric: true,
-        disablePadding: false,
+        disablePadding: true,
         label: 'starting Date',
     },
     {
@@ -156,6 +157,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
         };
+
+
 
     return (
         <TableHead>
@@ -262,6 +265,29 @@ export const TableItems = () => {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const navigate = useNavigate();
+    // const rows: Data[] = [
+    //     createData(1, "item1", 1, 1, new Date(), new Date()),
+    //     createData(2, "item2", 2, 5, new Date(), new Date()),
+    //     createData(3, "item4", 3, 6, new Date(), new Date()),
+    //     createData(4, "item5", 6, 7, new Date(), new Date()),
+
+    // ];
+    const [rows, setRows] = useState<Data[]>([]);
+
+    const { data: items } = useGetItemsQuery("");
+
+    useEffect(() => {
+        console.log(items)
+        const ROWS: Data[] = [];
+        if (items) {
+            items.items.map((item: any) => {
+                ROWS.push(createData(item.id, item.name, item.start_price, item.current_bid, new Date(item.starting_Date), new Date(item.endOfAuction)));
+            });
+        }
+        setRows(ROWS);
+    }, [items]);
+
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -342,7 +368,7 @@ export const TableItems = () => {
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row.name as string);
                                     const labelId = `enhanced-table-checkbox-${index}`;
-
+                                    if (!row) return <></>
                                     return (
                                         <TableRow
                                             sx={{ cursor: 'pointer' }}
@@ -350,8 +376,9 @@ export const TableItems = () => {
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.name}
+                                            key={row.id}
                                             selected={isItemSelected}
+
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
@@ -363,11 +390,10 @@ export const TableItems = () => {
                                                     }}
                                                 />
                                             </TableCell>
+                                            <TableCell align="right">{row.id}</TableCell>
+
                                             <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                padding="none"
+
                                             >
                                                 {row.name}
                                             </TableCell>
@@ -375,7 +401,7 @@ export const TableItems = () => {
                                             <TableCell align="right">{row.current_bid}</TableCell>
                                             <TableCell align="right">{row.starting_Date.toLocaleString()}</TableCell>
                                             <TableCell align="right">{row.endOfAuction.toLocaleString()}</TableCell>
-                                            <TableCell align="right" sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}><CustomButton>edite</CustomButton></TableCell>
+                                            <TableCell align="right" sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}><CustomButton onClick={() => { navigate(`/items/${row.id}`) }}>detail</CustomButton><EditItem id={parseInt(row.id as string)} /></TableCell>
                                         </TableRow>
                                     );
                                 })}

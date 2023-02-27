@@ -19,10 +19,10 @@ export const SearchInput = ({ searchText, setSearchText }: SearchInputProps) => 
     const [showClearIcon, setShowClearIcon] = useState("none");
 
     useEffect(() => {
-        if (searchText = "") {
+        if (searchText == "") {
             setShowClearIcon("none")
         } else {
-            setShowClearIcon("block")
+            setShowClearIcon("contents")
         }
 
     }, [searchText])

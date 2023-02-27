@@ -26,3 +26,25 @@
     color: rgba(#000, 0.65);
   }
 }
+
+@media (max-width: 768px) {
+  #countdown {
+    .number {
+      font-size: 3.5vw;
+      position: relative;
+      padding-bottom: 5vw;
+      &:not(:last-child) {
+        margin-right: 10vw;
+        &::after {
+          content: ":";
+          position: absolute;
+          right: -2.5vw;
+          top: -0.5vw;
+        }
+      }
+    }
+    .text {
+      font-size: 3.3vw;
+    }
+  }
+}

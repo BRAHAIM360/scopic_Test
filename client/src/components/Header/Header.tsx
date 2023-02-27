@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { RootState, useAppDispatch, useAppSelector } from '../../store';
 import { logout } from '../../store/auth/authSlice';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { Drawer } from '../Drawer/Drawer';
 
 export const Header = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -38,15 +39,18 @@ export const Header = () => {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                    <Drawer
+                        ButtonTriger={<IconButton
+                            size="large"
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            sx={{ mr: 2 }}
+                        >
+                            <MenuIcon />
+                        </IconButton>}
+                    ></Drawer>
+
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     </Typography>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

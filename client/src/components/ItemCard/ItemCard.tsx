@@ -8,6 +8,7 @@ import { CardActionArea } from '@mui/material';
 import Container from '@mui/material/Container';
 import "./style.scss"
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../helpers/axios';
 
 export interface ItemCardProps {
     id: number;
@@ -22,11 +23,11 @@ export interface ItemCardProps {
 export const ItemCard = ({ id, name, description, currentPrice, endOfAuction, image, buttonAction }: ItemCardProps) => {
     const navigate = useNavigate();
     return (
-        <Card sx={{ maxWidth: 300, cursor: "default" }}>
+        <Card sx={{ width: "300px", height: "300px", flex: "0 0 300px", cursor: "default" }}>
             <CardMedia
                 component="img"
                 height="140"
-                image={image}
+                image={BASE_URL + image}
                 alt="green iguana"
             />
             <CardContent>

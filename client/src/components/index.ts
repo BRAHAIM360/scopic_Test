@@ -8,3 +8,5 @@ export * from "./Button/Button";
 export * from "./CustomModal/CustomModal";
 export * from "./AddItem/AddItem";
 export * from "./CustomSwitch/CustomSwitch";
+export * from "./Drawer/Drawer";
+export * from "./EditItem/EditItem";

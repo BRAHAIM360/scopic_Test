@@ -3,6 +3,7 @@ import { width } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CountDown, CustomSwitch, Header } from '../../components'
+import { BASE_URL } from '../../helpers/axios'
 import { useGetItemQuery } from '../../store/itemApi'
 import "./style.scss"
 
@@ -10,35 +11,33 @@ import "./style.scss"
 export const ItemDetails = () => {
     //get id from url params
     const { id } = useParams()
-    // const { data: item, isError, currentData } = useGetItemQuery(id)
-    // useEffect(() => {
-    //     console.log("items is", item)
-    // }, [item])
+    const { data: item, isError, currentData } = useGetItemQuery(id)
+    useEffect(() => {
+        console.log("items is", item)
+    }, [item])
     const [autoBid, setAutoBid] = useState(false)
     const [bidButtonDisabled, setBidButtonDisabled] = useState(true)
     const [bidAmount, setBidAmount] = useState(0)
     useEffect(() => {
-        if (bidAmount > 0) setBidButtonDisabled(false)
+        if (item && bidAmount > item.current_bid) setBidButtonDisabled(false)
         else setBidButtonDisabled(true)
     }, [bidAmount])
 
-    const item = {
-        name: "item name",
-        description: "item description"
-    }
+
+
     return (
-        <>
+        <div>
             <Header />
-            {item === null
+            {item === undefined || item === null
                 ? <div>item not found</div>
                 : <div className="item-details">
                     <div className='left'>
-                        <img src='/images/bg.jpeg' alt='' />
+                        <img src={BASE_URL + item.image} alt='' />
                     </div>
                     <div className='right'>
                         <div className='item-details__name'><span>{item.name}</span></div>
                         <div className='item-details__description'>{item.description}</div>
-                        <div className='item-details__price'>Current Price: 561$</div>
+                        <div className='item-details__price'>Current Price: {item.current_bid}$</div>
                         <div className='bid'>
                             <FormControl sx={{ height: '4rem' }}>
                                 <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
@@ -61,6 +60,6 @@ export const ItemDetails = () => {
 
                 </div>
             }
-        </>
+        </div>
     )
 }

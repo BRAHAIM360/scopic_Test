@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./queryApi";
 
-interface itemInterface {
+export interface itemInterface {
   id?: number;
   name?: string;
   description?: string;
@@ -17,7 +17,7 @@ export const itemApi = createApi({
   tagTypes: ["Items"],
   endpoints: (builder) => ({
     getItems: builder.query({
-      query: (page = 1, limit = 10) => `/items/`,
+      query: ({ search, page = 1, limit = 10 }) => `/items/`,
       providesTags: (result = [], error, arg) => [
         "Items",
         ...result.items.map(({ id }: { id: number }) => ({

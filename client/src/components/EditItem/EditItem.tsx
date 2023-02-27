@@ -11,104 +11,93 @@ import Input from '@mui/material/Input';
 import FileUpload from "react-material-file-upload";
 import './style.scss'
 import axios from '../../helpers/axios';
-import { useAddItemMutation } from '../../store/itemApi';
+import { useUpdateItemMutation, useGetItemQuery, itemInterface } from '../../store/itemApi';
 import { toast } from "react-toastify";
 
+interface AddItemProps {
+    id: number,
+}
 
-export const AddItem = () => {
+export const EditItem = ({ id }: AddItemProps) => {
+    const { data: item } = useGetItemQuery(id);
     const [modalAdd, setModalAdd] = useState(false)
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [starting_Date, setStarting_Date] = React.useState<Dayjs | null>(dayjs('2022-04-07'));
-    const [ending_Date, setEnding_Date] = React.useState<Dayjs | null>(dayjs('2022-04-07'));
+    const [starting_Date, setStarting_Date] = React.useState<Dayjs>(dayjs('2022-04-07'));
+    const [ending_Date, setEnding_Date] = React.useState<Dayjs>(dayjs('2022-04-07'));
     const [start_price, setStart_price] = useState(0)
     const [files, setFiles] = useState<File[]>([]);
-    useEffect(() => {
-        console.log(files)
-    }, [files])
-    const [addItem] = useAddItemMutation();
 
+
+    useEffect(() => {
+        if (item) {
+            setName(item.name)
+            setDescription(item.description)
+            setStarting_Date(dayjs(item.starting_Date));
+            setEnding_Date(dayjs(item.ending_Date));
+            setStart_price(item.start_price)
+        }
+    }, [item])
+
+
+    const [editItem] = useUpdateItemMutation()
     const submitButton = async () => {
 
-        if (files.length == 1 && starting_Date && ending_Date && name && description && start_price) {
 
-            try {
+        try {
+
+            const body: itemInterface = {
+                id,
+                name: name,
+                description: description,
+                start_price: start_price,
+                starting_Date: new Date(starting_Date.toString()),
+                ending_Date: new Date(ending_Date.toString()),
+            }
+            if (files[0]) {
                 const formData = new FormData();
                 formData.append("image", files[0]);
                 const imageLink = await axios.post("/upload", formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
-                console.log(imageLink);
-                const responseFiles: any = await addItem({
-                    name: name,
-                    description: description,
-                    start_price: start_price,
-                    starting_Date: new Date(starting_Date.toString()),
-                    ending_Date: new Date(ending_Date.toString()),
-                    image: imageLink.data.image
-                })
-                if (responseFiles.data) {
-                    toast.dismiss();
-                    toast.success("Item Added Successfully");
-                    setModalAdd(false);
-
-                } else {
-                    toast.dismiss();
-                    toast.success("Item Added Successfully");
-                    toast.error("Item Couldn't be added");
-
-                }
-
-            } catch (error) {
-                toast.dismiss();
-                toast.error("Item Couldn't be added");
+                body.image = imageLink.data.image;
             }
 
-            // const formData = new FormData();
-            // formData.append("image", files[0]);
-            // axios.post("/items/upload", formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     }
-            // }).then(async (res) => {
-            //     console.log(res.data);
-            //     const responseFiles = await addItem({
-            //         name: name,
-            //         description: description,
-            //         start_price: start_price,
-            //         starting_Date: new Date(starting_Date.toString()),
-            //         ending_Date: new Date(ending_Date.toString()),
-            //         image: res.data.image
-            //     })
-            //     if (responseFiles.error) {
-            //         toast.dismiss();
-            //         toast.error("Files Couldn't be uploaded");
-            //     } else {
-            //         toast.dismiss();
-            //         toast.success("Reclamation Added Successfully");
+            const responseFiles: any = await editItem(body)
+            if (responseFiles.data) {
+                toast.dismiss();
+                toast.success("Item updated Successfully");
+                setModalAdd(false);
 
-            //         setSelectedFiles([]);
-            //     }
-            // })
-        } else {
-            alert('Please fill all the fields')
+            } else {
+                toast.dismiss();
+                toast.error("Item Couldn't be updated");
+
+            }
+
+        } catch (error) {
+            toast.dismiss();
+            toast.error("Item Couldn't be added");
         }
+
+
     }
 
     return (
 
-        <CustomModal buttonComponent={<CustomButton onClick={() => { setModalAdd(true) }} sx={{ mr: '10px', backgroundColor: 'green', ":hover": { backgroundColor: "green" } }}  >ADD</CustomButton >}
+        <CustomModal buttonComponent={<CustomButton onClick={() => { setModalAdd(true) }} sx={{ mr: '10px', backgroundColor: 'green', ":hover": { backgroundColor: "green" } }}  >EDIT</CustomButton >}
             open={modalAdd}
             setOpen={setModalAdd}
         >
             <div className="add-Item_container">
-
+                <h1>Edit Item</h1>
                 <TextField
                     required
                     id="outlined-required"
                     label="Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    sx={{ width: '100%' }}
                 // defaultValue="Name of the Item"
                 />
                 <TextField
@@ -137,7 +126,7 @@ export const AddItem = () => {
                         label="Starting Date"
                         value={starting_Date}
                         onChange={(newValue) => {
-                            setStarting_Date(newValue);
+                            newValue && setStarting_Date(newValue);
                         }}
                     />
                 </LocalizationProvider>
@@ -149,7 +138,7 @@ export const AddItem = () => {
                         label="Ending Date"
                         value={ending_Date}
                         onChange={(newValue) => {
-                            setEnding_Date(newValue);
+                            newValue && setEnding_Date(newValue);
                         }}
                     />
                 </LocalizationProvider>
