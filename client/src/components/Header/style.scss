@@ -1,0 +1,25 @@
+.logo {
+  width: 70px;
+  height: 70px;
+  background-size: cover;
+  border-radius: 10%;
+
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #a47a42;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .logo {
+    span {
+      display: none;
+    }
+  }
+}
