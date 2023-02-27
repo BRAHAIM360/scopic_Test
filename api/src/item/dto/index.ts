@@ -1,3 +1,3 @@
 export * from "./create-item.dto";
 export * from "./update-item.dto";
-export * from "./create-bid.dto";
+export * from "./query-item.dto";

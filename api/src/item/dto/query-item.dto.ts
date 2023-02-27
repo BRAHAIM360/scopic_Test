@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { QueryPage } from "src/common/page/query-args.dto";
 
 export class QueryItemDto extends QueryPage {
@@ -10,6 +10,7 @@ export class QueryItemDto extends QueryPage {
   })
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   search: string;
 
   @ApiProperty({
@@ -19,6 +20,7 @@ export class QueryItemDto extends QueryPage {
   })
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   sort_by: string;
 
   @ApiProperty({
@@ -28,5 +30,6 @@ export class QueryItemDto extends QueryPage {
   })
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   order: string;
 }
