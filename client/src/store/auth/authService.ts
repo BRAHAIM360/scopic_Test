@@ -10,7 +10,6 @@ const login = async (userData: { username: string; password: string }) => {
   if (response.data) {
     // console.log('%c⧭', 'color: #00a3cc', response.data);
     const access_token: string = response.data.access_token;
-    console.log("%c⧭", "color: #00a3cc", jwt_decode(access_token));
     const { isAdmin } = jwt_decode(access_token) as any;
     const user = {
       access_token,

@@ -1,3 +1,4 @@
+import jwt_decode from "jwt-decode";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import authService from "./authService";
@@ -59,6 +60,8 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isLoginSuccess = true;
         state.isLogged = true;
+        const { isAdmin } = jwt_decode(action.payload.access_token) as any;
+        state.isAdmin = isAdmin;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;

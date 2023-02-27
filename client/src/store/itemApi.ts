@@ -1,6 +1,16 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./queryApi";
 
+interface itemInterface {
+  id?: number;
+  name?: string;
+  description?: string;
+  start_price?: number;
+  starting_Date?: Date;
+  ending_Date?: Date;
+  image?: string;
+}
+
 export const itemApi = createApi({
   reducerPath: "item",
   baseQuery: baseQueryWithReauth,
@@ -23,7 +33,7 @@ export const itemApi = createApi({
     }),
 
     addItem: builder.mutation({
-      query(item) {
+      query(item: itemInterface) {
         return {
           url: `/items/`,
           method: "POST",
@@ -34,7 +44,7 @@ export const itemApi = createApi({
     }),
 
     updateItem: builder.mutation({
-      query(item) {
+      query(item: itemInterface) {
         return {
           url: `/items/${item.id}/`,
           method: "PATCH",
