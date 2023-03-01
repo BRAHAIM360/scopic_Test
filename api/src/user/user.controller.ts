@@ -1,9 +1,9 @@
 import { GetUserId } from "src/common/decorator";
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { Body, Controller, Get, HttpCode, HttpStatus, Patch } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { EditConfigDto } from "./dto";
-
+@ApiTags("users")
 @Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}

@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateItemDto {
@@ -43,7 +44,7 @@ export class CreateItemDto {
     description: "starting date",
     required: true,
   })
-  @IsNumber()
+  @Type(() => Date)
   @IsNotEmpty()
   starting_Date: Date;
 
@@ -52,7 +53,7 @@ export class CreateItemDto {
     description: "date end of the auction",
     required: true,
   })
-  @IsNumber()
   @IsNotEmpty()
+  @Type(() => Date)
   ending_Date: Date;
 }

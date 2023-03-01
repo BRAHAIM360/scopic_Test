@@ -18,7 +18,7 @@ import { ApiFile } from "src/common/decorator/api-file.decorator";
 import { ParseFile } from "src/common/decorator/parse-file.pipe";
 import { Response } from "express";
 
-@ApiTags("root")
+@ApiTags("upload")
 @Controller("upload")
 @Public()
 export class AppController {

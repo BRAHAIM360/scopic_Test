@@ -11,12 +11,28 @@ export class BidService {
       where: {
         id: itemId,
       },
+      include: {
+        bid: { orderBy: { createdAt: "desc" } },
+      },
     });
+    if (item.bid.length > 0 && userId == item.bid[0].user_id)
+      return { message: "You are the last bidder" };
+
     if (!item) throw new BadRequestException("Item not found");
-    if (item.current_bid > dto.amount)
+    if (isBot == false && item.current_bid > dto.amount)
       throw new BadRequestException("Price is lower than current bid");
-    if (item.current_bid == dto.amount)
+    if (isBot == false && item.current_bid == dto.amount)
       throw new BadRequestException("Price is equal to current bid price");
+
+    //if the last bid is from the bot we need to return the amount to the user
+    //this will let the bot bid again with the new amount
+    const [lastBid] = item.bid;
+    if (isBot == false && item.bid.length > 0 && lastBid.autoBid) {
+      await this.prisma.user.update({
+        where: { id: lastBid.user_id },
+        data: { bid_amount: { decrement: lastBid.bid_price } },
+      });
+    }
 
     const bid = await this.prisma.bid.create({
       data: {
@@ -53,17 +69,20 @@ export class BidService {
         data: { autoBidingUsers: { connect: { id: userId } } },
       });
       this.autoBiddingBot(itemId);
-      return item;
+      return { message: "Auto bidding enabled" };
     } else {
       await this.prisma.item.update({
         where: { id: itemId },
         data: { autoBidingUsers: { disconnect: { id: userId } } },
       });
+
+      return { message: "Auto bidding disabled" };
     }
   }
 
   //this is the function  will handle the auto bidding bot and notification it will be called each time a new bid is created
   async autoBiddingBot(itemId: number) {
+    console.log("auto bidding bot started");
     //get the item
     let item = await this.prisma.item.findUnique({
       where: { id: itemId },
@@ -72,7 +91,7 @@ export class BidService {
         bid: { orderBy: { createdAt: "desc" } },
       },
     });
-
+    // console.log(item);
     //if we have no user in autobidding list
     if (item.autoBidingUsers.length == 0) return;
 
@@ -81,12 +100,12 @@ export class BidService {
       const [user] = item.autoBidingUsers;
       const [lastBid] = item.bid;
 
-      //if last bid is from this user to prevent infinite loop
+      //if last bid is from this user return , to prevent infinite loop
       if (lastBid?.user_id == user.id) return;
 
       //if the remaining amount is less than the current bid we send notification to the user and return
       if (user.max_bid - user.bid_amount < item.current_bid + 1) {
-        this.prisma.notification.create({
+        await this.prisma.notification.create({
           data: {
             user: {
               connect: { id: user.id },
@@ -100,7 +119,7 @@ export class BidService {
       //if last bid is from other user
 
       //if last bid is from the bot so we need to return the amount to the user
-      if (lastBid.autoBid)
+      if (lastBid?.autoBid)
         await this.prisma.user.update({
           where: { id: lastBid.user_id },
           data: { bid_amount: { decrement: lastBid.bid_price } },
@@ -110,20 +129,20 @@ export class BidService {
       const [_, updatedUser] = await Promise.all([
         this.createBid(user.id, itemId, { amount: item.current_bid + 1 }, true),
         this.prisma.user.update({
-          where: { id: lastBid.user_id },
-          data: { bid_amount: { increment: lastBid.bid_price } },
+          where: { id: user.id },
+          data: { bid_amount: { increment: item.current_bid + 1 } },
         }),
       ]);
 
       //send notification to the user if he reach bid alert
       const pourcentage = (updatedUser.bid_amount / updatedUser.max_bid) * 100;
       if (pourcentage >= updatedUser.bid_alert)
-        this.prisma.notification.create({
+        await this.prisma.notification.create({
           data: {
             user: {
               connect: { id: updatedUser.id },
             },
-            message: `You have reached ${pourcentage}% of your bid alert`,
+            message: `You have reached ${pourcentage.toFixed(2)}% of your bid alert`,
           },
         });
     }
@@ -148,7 +167,9 @@ export class BidService {
       });
 
       //we sort the users in descending order by the remaining amount
-      item.autoBidingUsers.sort((a, b) => b.max_bid - b.bid_amount - (a.max_bid - a.bid_amount));
+      item.autoBidingUsers.sort((a, b) => {
+        return b.max_bid - b.bid_amount - (a.max_bid - a.bid_amount);
+      });
 
       //we get the first two users who have the highest bid amount remaining
       let [user1, user2] = item.autoBidingUsers;
@@ -163,7 +184,7 @@ export class BidService {
       const [_, updatedUser] = await Promise.all([
         this.createBid(user1.id, itemId, { amount }, true),
         this.prisma.user.update({
-          where: { id: lastBid.user_id },
+          where: { id: user1.id },
           data: { bid_amount: { increment: amount } },
         }),
       ]);
@@ -171,12 +192,12 @@ export class BidService {
       //send notification to the user if he reach bid alert
       const pourcentage = (updatedUser.bid_amount / updatedUser.max_bid) * 100;
       if (pourcentage >= updatedUser.bid_alert)
-        this.prisma.notification.create({
+        await this.prisma.notification.create({
           data: {
             user: {
               connect: { id: updatedUser.id },
             },
-            message: `You have reached ${pourcentage}% of your bid alert`,
+            message: `You have reached ${pourcentage.toFixed(2)}% of your bid alert`,
           },
         });
     }

@@ -14,6 +14,16 @@ export class EditConfigDto {
 
   @ApiProperty({
     type: Number,
+    description: "max bit for auto biding",
+    required: false,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  @IsOptional()
+  max_bid: number;
+
+  @ApiProperty({
+    type: Number,
     description: "bid alert proucentage",
     required: false,
   })

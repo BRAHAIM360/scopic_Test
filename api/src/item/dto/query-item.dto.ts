@@ -9,7 +9,6 @@ export class QueryItemDto extends QueryPage {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   search: string;
 

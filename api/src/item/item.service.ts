@@ -3,7 +3,7 @@ import { UpdateItemDto } from "./dto/update-item.dto";
 import { QueryItemDto } from "./dto/query-item.dto";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateItemDto } from "./dto";
+import { CreateItemDto, DeleteItemsDto } from "./dto";
 
 import { Prisma } from "@prisma/client";
 
@@ -45,7 +45,7 @@ export class ItemService {
         }
       : {};
     const orderBy: Prisma.ItemOrderByWithAggregationInput = {
-      [sort_by]: order,
+      [sort_by || "id"]: order || "asc",
     };
     const [items, recordsTotal]: any = await Promise.all([
       this.prisma.item.findMany({
@@ -76,32 +76,66 @@ export class ItemService {
 
     return { items, pageinfo };
   }
-
+  //
   async getItem(itemId: number) {
-    const items = await this.prisma.item.findUnique({
+    const item: any = await this.prisma.item.findUnique({
       where: {
         id: itemId,
       },
+      include: {
+        bid: {
+          orderBy: { createdAt: "desc" },
+          include: { user: { select: { username: true } } },
+        },
+      },
     });
-    return items;
+    if (!item) throw new BadRequestException("Item not found");
+    if (item.bid.length > 0) {
+      item.usernameLastBid = item.bid[0].user.username;
+    }
+    delete item.bid;
+    return item;
   }
 
   async editItemById(itemId: number, data: UpdateItemDto) {
-    const item = await this.prisma.item.update({
-      where: {
-        id: itemId,
-      },
-      data,
-    });
-    return item;
+    try {
+      await this.prisma.item.update({
+        where: {
+          id: itemId,
+        },
+        data,
+      });
+      return { message: "Item updated" };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async deleteItemById(itemId: number) {
-    const item = await this.prisma.item.delete({
-      where: {
-        id: itemId,
-      },
-    });
-    return item;
+    try {
+      await this.prisma.item.delete({
+        where: {
+          id: itemId,
+        },
+      });
+      return { message: "Item deleted" };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async deleteItems(dto: DeleteItemsDto) {
+    try {
+      await this.prisma.item.deleteMany({
+        where: {
+          id: {
+            in: dto.items,
+          },
+        },
+      });
+      return { message: "Items deleted" };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

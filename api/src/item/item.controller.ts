@@ -24,7 +24,7 @@ import { Response } from "express";
 
 import { ApiFile } from "src/common/decorator/api-file.decorator";
 import { ParseFile } from "src/common/decorator/parse-file.pipe";
-import { UpdateItemDto } from "./dto";
+import { DeleteItemsDto, UpdateItemDto } from "./dto";
 import { ItemService } from "./item.service";
 import { QueryItemDto } from "./dto/query-item.dto";
 import { GetUserId, Public } from "src/common/decorator";
@@ -75,5 +75,13 @@ export class ItemController {
   deleteItemById(@GetIsAdmin() isAdmin: boolean, @Param("id", ParseIntPipe) ItemId: number) {
     if (!isAdmin) throw new ForbiddenException("Action not allowed");
     return this.itemService.deleteItemById(ItemId);
+  }
+
+  @Delete()
+  @ApiOkResponse({ description: "The resource has been successfully deleted" })
+  @ApiBadRequestResponse({ description: "Bad Request" })
+  deleteItems(@GetIsAdmin() isAdmin: boolean, @Body() dto: DeleteItemsDto) {
+    if (!isAdmin) throw new ForbiddenException("Action not allowed");
+    return this.itemService.deleteItems(dto);
   }
 }

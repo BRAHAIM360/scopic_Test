@@ -41,6 +41,9 @@ export class UserService {
         where: {
           user_id: userid,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
 
       return notifcations;
