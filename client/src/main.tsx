@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom';
+import { red, green, brown } from '@mui/material/colors';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import App from './App'
 import './index.scss'
 import store from './store'
