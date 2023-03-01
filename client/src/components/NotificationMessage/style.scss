@@ -1,0 +1,17 @@
+.notification-message {
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  p {
+    //show border
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.5rem;
+    max-width: 20rem;
+  }
+  span {
+    padding: 0.5rem;
+  }
+}

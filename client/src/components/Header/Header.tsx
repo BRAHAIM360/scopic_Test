@@ -19,19 +19,34 @@ import { RootState, useAppDispatch, useAppSelector } from '../../store';
 import { logout } from '../../store/auth/authSlice';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { Drawer } from '../Drawer/Drawer';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
+import { Badge } from '@mui/material';
+import { NotificationMessage } from '../NotificationMessage/NotificationMessage';
+import { useGetNotificationQuery } from '../../store/userApi';
+import { DarkThemeTogle } from '../DarkThemeTogle/DarkThemeTogle';
 
 export const Header = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorNotification, setAnchorNotification] = React.useState<null | HTMLElement>(null);
+
+    const { data: notification } = useGetNotificationQuery("");
 
     const { isAdmin } = useAppSelector((state: RootState) => state.auth);
 
 
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    const handleMainMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
+    const handleMenuNotification = (event: React.MouseEvent<HTMLElement>) => {
+        if (notification?.length > 0)
+            setAnchorNotification(event.currentTarget);
+    };
 
-    const handleClose = () => {
+    const handleCloseMainMenu = () => {
         setAnchorEl(null);
+    };
+    const handleCloseNotification = () => {
+        setAnchorNotification(null);
     };
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -60,12 +75,48 @@ export const Header = () => {
                         </div>
                     </Typography>
                     <div>
+                        <DarkThemeTogle />
+                        <IconButton
+                            size="large"
+                            aria-label="notifications"
+                            aria-controls="menu-notifications"
+                            aria-haspopup="true"
+                            onClick={handleMenuNotification}
+                            color="inherit"
+                        >
+                            <Badge badgeContent={notification && notification.length.toString()} color="secondary">
+                                <CircleNotificationsIcon />
+                            </Badge>
+                        </IconButton>
+                        <Menu
+                            id="menu-notifications"
+                            anchorEl={anchorNotification}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorNotification)}
+                            onClose={handleCloseNotification}
+                        >
+                            {notification?.map((item: any) => {
+                                return (
+                                    <NotificationMessage key={item.createdAt} message={item.message} date={item.createdAt} />
+                                )
+                            })
+                            }
+
+                        </Menu>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
-                            onClick={handleMenu}
+                            onClick={handleMainMenu}
                             color="inherit"
                         >
                             <AccountCircle />
@@ -83,11 +134,10 @@ export const Header = () => {
                                 horizontal: 'right',
                             }}
                             open={Boolean(anchorEl)}
-                            onClose={handleClose}
+                            onClose={handleCloseMainMenu}
                         >
                             {isAdmin && <MenuItem onClick={() => { navigate('/admin') }}><AdminPanelSettingsIcon sx={{ mr: 1 }} />Admin </MenuItem>}
 
-                            <MenuItem onClick={handleClose}><SettingsIcon sx={{ mr: 1 }} />Settings </MenuItem>
                             <MenuItem onClick={() => { dispatch(logout()) }}><LogoutIcon sx={{ mr: 1 }} />Logout</MenuItem>
                         </Menu>
 

@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithReauth } from "./queryApi";
+import { baseQuery } from "./userApi";
 
 export interface itemInterface {
   id?: number;
@@ -13,18 +13,11 @@ export interface itemInterface {
 
 export const itemApi = createApi({
   reducerPath: "item",
-  baseQuery: baseQueryWithReauth,
+  baseQuery,
   tagTypes: ["Items"],
   endpoints: (builder) => ({
     getItems: builder.query({
-      query: ({ search, page = 1, limit = 10 }) => `/items/`,
-      providesTags: (result = [], error, arg) => [
-        "Items",
-        ...result.items.map(({ id }: { id: number }) => ({
-          type: "Items",
-          id,
-        })),
-      ],
+      query: (params = "") => `/items/${params}`,
     }),
 
     getItem: builder.query({
@@ -62,7 +55,17 @@ export const itemApi = createApi({
       }),
       invalidatesTags: ["Items"],
     }),
+    deleteItems: builder.mutation({
+      query: (items: number[]) => ({
+        url: `/items/`,
+        method: `DELETE`,
+        body: items,
+      }),
+      invalidatesTags: ["Items"],
+    }),
   }),
+  //to disable caching
+  keepUnusedDataFor: 0,
 });
 
 export const {
@@ -71,4 +74,5 @@ export const {
   useAddItemMutation,
   useDeleteItemMutation,
   useUpdateItemMutation,
+  useDeleteItemsMutation,
 } = itemApi;

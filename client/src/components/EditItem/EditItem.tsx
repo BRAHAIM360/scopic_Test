@@ -77,7 +77,7 @@ export const EditItem = ({ id }: AddItemProps) => {
 
         } catch (error) {
             toast.dismiss();
-            toast.error("Item Couldn't be added");
+            toast.error("Item Couldn't be updated");
         }
 
 
@@ -85,7 +85,7 @@ export const EditItem = ({ id }: AddItemProps) => {
 
     return (
 
-        <CustomModal buttonComponent={<CustomButton onClick={() => { setModalAdd(true) }} sx={{ mr: '10px', backgroundColor: 'green', ":hover": { backgroundColor: "green" } }}  >EDIT</CustomButton >}
+        <CustomModal buttonComponent={<CustomButton onClick={() => { setModalAdd(true) }} sx={{ mr: '10px', ":hover": { backgroundColor: "green" } }}  >EDIT</CustomButton >}
             open={modalAdd}
             setOpen={setModalAdd}
         >

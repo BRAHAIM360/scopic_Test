@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+import produce from "immer";
 import authService from "./authService";
 
 // GET User from LocalStorage
@@ -13,6 +13,7 @@ const initialState = {
   isLoading: false,
   isLoginSuccess: false,
   message: "",
+  darkTheme: false,
 };
 
 // Login user
@@ -45,10 +46,16 @@ export const authSlice = createSlice({
       state.isSuccess = false;
       state.isLoading = false;
       state.message = "";
+      state.darkTheme = false;
     },
     logout: (state) => {
       localStorage.removeItem("user");
       state.isLogged = false;
+    },
+    switchTheme: (state) => {
+      produce(state, (draftState) => {
+        state.darkTheme = !draftState.darkTheme;
+      });
     },
   },
   extraReducers: (builder) => {
@@ -72,6 +79,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset, logout } = authSlice.actions;
+export const { reset, logout, switchTheme } = authSlice.actions;
 
 export default authSlice.reducer;

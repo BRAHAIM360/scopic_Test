@@ -23,6 +23,8 @@ export const DropDown = ({ options }: DropDownProps) => {
         setAnchorEl(null);
     };
 
+    const [selected, setSelected] = React.useState('default');
+
     return (
         <div>
             <IconButton
@@ -50,8 +52,8 @@ export const DropDown = ({ options }: DropDownProps) => {
                     },
                 }}
             >
-                {options.map(({ name }) => (
-                    <MenuItem key={name} selected={name === 'Pyxis'} onClick={handleClose}>
+                {options.map(({ name, action }) => (
+                    <MenuItem key={name} selected={name === selected} onClick={() => { setSelected(name); action() }}>
                         {name}
                     </MenuItem>
                 ))}

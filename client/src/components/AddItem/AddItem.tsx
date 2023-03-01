@@ -12,7 +12,8 @@ import FileUpload from "react-material-file-upload";
 import './style.scss'
 import axios from '../../helpers/axios';
 import { useAddItemMutation } from '../../store/itemApi';
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export const AddItem = () => {
@@ -38,7 +39,6 @@ export const AddItem = () => {
                 const imageLink = await axios.post("/upload", formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
-                console.log(imageLink);
                 const responseFiles: any = await addItem({
                     name: name,
                     description: description,
@@ -48,13 +48,10 @@ export const AddItem = () => {
                     image: imageLink.data.image
                 })
                 if (responseFiles.data) {
-                    toast.dismiss();
                     toast.success("Item Added Successfully");
                     setModalAdd(false);
 
                 } else {
-                    toast.dismiss();
-                    toast.success("Item Added Successfully");
                     toast.error("Item Couldn't be added");
 
                 }
@@ -64,34 +61,9 @@ export const AddItem = () => {
                 toast.error("Item Couldn't be added");
             }
 
-            // const formData = new FormData();
-            // formData.append("image", files[0]);
-            // axios.post("/items/upload", formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     }
-            // }).then(async (res) => {
-            //     console.log(res.data);
-            //     const responseFiles = await addItem({
-            //         name: name,
-            //         description: description,
-            //         start_price: start_price,
-            //         starting_Date: new Date(starting_Date.toString()),
-            //         ending_Date: new Date(ending_Date.toString()),
-            //         image: res.data.image
-            //     })
-            //     if (responseFiles.error) {
-            //         toast.dismiss();
-            //         toast.error("Files Couldn't be uploaded");
-            //     } else {
-            //         toast.dismiss();
-            //         toast.success("Reclamation Added Successfully");
 
-            //         setSelectedFiles([]);
-            //     }
-            // })
         } else {
-            alert('Please fill all the fields')
+            toast.error('Please fill all the fields')
         }
     }
 

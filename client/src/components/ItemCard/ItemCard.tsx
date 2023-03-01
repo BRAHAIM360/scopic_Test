@@ -16,31 +16,34 @@ export interface ItemCardProps {
     description: string;
     image: string;
     endOfAuction: Date;
-    currentPrice: number;
+    current_bid: number;
     buttonAction?: () => void;
 }
 
-export const ItemCard = ({ id, name, description, currentPrice, endOfAuction, image, buttonAction }: ItemCardProps) => {
+export const ItemCard = ({ id, name, description, current_bid, endOfAuction, image, buttonAction }: ItemCardProps) => {
     const navigate = useNavigate();
     return (
-        <Card sx={{ width: "300px", height: "300px", flex: "0 0 300px", cursor: "default" }}>
+        <Card sx={{ width: "400px", height: "500px", flex: "0 1 400px", cursor: "default", borderRadius: "10%" }}>
             <CardMedia
                 component="img"
-                height="140"
+                height="50%"
                 image={BASE_URL + image}
                 alt="green iguana"
             />
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+            <CardContent  >
+                <Typography gutterBottom variant="h4" component="div" >
                     {name}
+                </Typography>
+                <Typography gutterBottom variant="h5" component="div">
+                    <h4 >Current Bid: {current_bid}$</h4>
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{
                     display: '-webkit-box',
                     overflow: 'hidden',
                     WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 4,
+                    WebkitLineClamp: 1,
                 }}>
-                    {description}
+                    <strong>Description:</strong>  {description}
                 </Typography>
                 <Container maxWidth="sm" sx={{ display: "flex", justifyContent: "center", marginTop: '1rem' }}>
                     <Button variant="contained" onClick={() => navigate(`items/${id}`)}>Bid Now</Button>

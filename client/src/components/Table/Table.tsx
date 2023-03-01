@@ -15,8 +15,6 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
@@ -24,9 +22,12 @@ import { CustomButton } from '../Button/Button';
 import { CustomModal } from '../CustomModal/CustomModal';
 import { AddItem } from '../AddItem/AddItem';
 import { EditItem } from '../EditItem/EditItem';
-import { useGetItemsQuery } from '../../store/itemApi';
+import { useDeleteItemsMutation, useGetItemsQuery } from '../../store/itemApi';
 import { useNavigate } from 'react-router-dom';
-
+import { MessageBox } from '../MessageBox/MessageBox';
+import { toast, ToastContainer } from "react-toastify";
+import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import { BASE_URL } from '../../helpers/axios';
 interface Data {
     id: number,
     name: string,
@@ -35,6 +36,7 @@ interface Data {
     endOfAuction: Date,
     starting_Date: Date,
     editButton?: void,
+    image?: string,
 }
 
 function createData(
@@ -44,6 +46,7 @@ function createData(
     start_price: number,
     endOfAuction: Date,
     starting_Date: Date,
+    image: string,
 ): Data {
     return {
         id,
@@ -52,6 +55,7 @@ function createData(
         start_price,
         endOfAuction,
         starting_Date,
+        image,
     };
 }
 
@@ -202,10 +206,31 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
+    selected?: number[];
 }
 
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-    const { numSelected } = props;
+function EnhancedTableToolbar({ numSelected, selected }: EnhancedTableToolbarProps) {
+
+    const [onDeleteMessageBox, setOnDeleteMessageBox] = useState(false);
+    const [deleteItems] = useDeleteItemsMutation();
+
+    const OnSubmitDeleteItems = async () => {
+        // try {
+
+        //     const responseFiles: any = await deleteItems(selected)
+        //     if (responseFiles.data) {
+        //         toast.success("Item deleted Successfully");
+        //         setOnDeleteMessageBox(false);
+
+        //     } else {
+        //         toast.error("Item Couldn't be deleted");
+        //     }
+
+        // } catch (error) {
+        //     toast.dismiss();
+        //     toast.error("Item Couldn't be deleted");
+        // }
+    }
 
     return (
         <Toolbar
@@ -242,9 +267,11 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             {
                 numSelected > 0 ? (
                     <Tooltip title="Delete">
-                        <IconButton>
-                            <DeleteIcon />
-                        </IconButton>
+                        <MessageBox setOpen={setOnDeleteMessageBox} open={onDeleteMessageBox} title='DELETE ITEMS' content="Are you sure you want to delete these items?" onSubmit={OnSubmitDeleteItems}>
+                            <IconButton onClick={() => setOnDeleteMessageBox(true)} >
+                                <DeleteIcon />
+                            </IconButton>
+                        </MessageBox>
                     </Tooltip>
                 ) : (
                     <Tooltip title="Filter list">
@@ -261,7 +288,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 export const TableItems = () => {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -274,7 +301,7 @@ export const TableItems = () => {
 
     // ];
     const [rows, setRows] = useState<Data[]>([]);
-
+    const [showImage, setShowImage] = useState(false);
     const { data: items } = useGetItemsQuery("");
 
     useEffect(() => {
@@ -282,12 +309,15 @@ export const TableItems = () => {
         const ROWS: Data[] = [];
         if (items) {
             items.items.map((item: any) => {
-                ROWS.push(createData(item.id, item.name, item.start_price, item.current_bid, new Date(item.starting_Date), new Date(item.endOfAuction)));
+                ROWS.push(createData(item.id, item.name, item.start_price, item.current_bid, new Date(item.starting_Date), new Date(item.endOfAuction), item.image));
             });
         }
         setRows(ROWS);
     }, [items]);
 
+    useEffect(() => {
+        console.log("list of selected items ", selected)
+    }, [selected])
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -300,19 +330,21 @@ export const TableItems = () => {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.name);
+            const newSelected = rows.map((n) => n.id);
+            console.log(newSelected)
             setSelected(newSelected);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected: readonly string[] = [];
+    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+        console.log("id", id)
+        const selectedIndex = selected.indexOf(id);
+        let newSelected: number[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -338,7 +370,7 @@ export const TableItems = () => {
 
 
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -347,6 +379,7 @@ export const TableItems = () => {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
+                <ToastContainer />
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
                     <Table
@@ -366,7 +399,7 @@ export const TableItems = () => {
                             {stableSort(rows as any, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.name as string);
+                                    const isItemSelected = isSelected(row.id as number);
                                     const labelId = `enhanced-table-checkbox-${index}`;
                                     if (!row) return <></>
                                     return (
@@ -382,7 +415,7 @@ export const TableItems = () => {
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
-                                                    onClick={(event) => handleClick(event, row.name as string)}
+                                                    onClick={(event) => handleClick(event, row.id as number)}
                                                     color="primary"
                                                     checked={isItemSelected}
                                                     inputProps={{
@@ -401,7 +434,13 @@ export const TableItems = () => {
                                             <TableCell align="right">{row.current_bid}</TableCell>
                                             <TableCell align="right">{row.starting_Date.toLocaleString()}</TableCell>
                                             <TableCell align="right">{row.endOfAuction.toLocaleString()}</TableCell>
-                                            <TableCell align="right" sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}><CustomButton onClick={() => { navigate(`/items/${row.id}`) }}>detail</CustomButton><EditItem id={parseInt(row.id as string)} /></TableCell>
+                                            <TableCell align="right" sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}>
+                                                <CustomButton onClick={() => { navigate(`/items/${row.id}`) }} sx={{ mr: '10px', ":hover": { backgroundColor: "green" } }}>detail</CustomButton>
+                                                <EditItem id={parseInt(row.id as string)} />
+                                                <MessageBox component={<img src={`${BASE_URL}${row.image}`} style={{ height: "400px" }} />} >
+                                                    <CustomButton sx={{ mr: '10px', ":hover": { backgroundColor: "green" } }}><PhotoSizeSelectActualIcon /> </CustomButton>
+                                                </MessageBox>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
