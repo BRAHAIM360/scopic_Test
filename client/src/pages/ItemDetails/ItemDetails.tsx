@@ -8,7 +8,7 @@ import { CountDown, CustomSwitch, Header } from '../../components'
 import { BASE_URL } from '../../helpers/axios'
 import { useGetItemQuery, useAddbidMutation, useAutobiddingMutation } from '../../store/itemApi'
 import "./style.scss"
-
+import { CustomModal } from '../../components/CustomModal/CustomModal'
 
 export const ItemDetails = () => {
     //get id from url params
@@ -65,7 +65,7 @@ export const ItemDetails = () => {
         }
     }
 
-
+    const [bidHistoryOpen, setBidHistoryOpen] = useState(false);
 
     return (
         <div>
@@ -101,7 +101,32 @@ export const ItemDetails = () => {
                                     <Button disabled={bidButtonDisabled} onClick={onBid} variant="contained" sx={{ height: '3.5rem', mb: "0.5rem", width: "50%" }}>Bid</Button>
 
                                 </div>
-                                <CustomSwitch onChange={onChangeSwitch} label='Auto Bidding' enbled={autoBid} setEnbled={setAutoBid} />
+                                <div className='bidding' >
+                                    <CustomSwitch onChange={onChangeSwitch} label='Auto Bidding' enbled={autoBid} setEnbled={setAutoBid} />
+                                    <CustomModal open={bidHistoryOpen} setOpen={setBidHistoryOpen} buttonComponent={
+                                        <Button onClick={() => { setBidHistoryOpen(true) }} variant="contained" sx={{ height: '3.5rem', mb: "0.5rem", width: "50%" }}> bidding history</Button>
+                                    }>
+
+                                        <div className="bid-history">
+                                            <div className='bid-history-row'>
+                                                <div className='bid-history__name'>Name</div>
+                                                <div className='bid-history__bid'>Bid</div>
+                                                <div className='bid-history__date'>Date</div>
+                                            </div>
+                                            {item.bid.map((bid: any) => {
+                                                return (
+                                                    <div className='bid-history-row'>
+                                                        <div className='bid-history__name'>{bid.user.username}</div>
+                                                        <div className='bid-history__bid'><strong>{bid.bid_price}$</strong> </div>
+                                                        <div className='bid-history__date'>{new Date(bid.createdAt).toLocaleString()}</div>
+                                                    </div>)
+                                            })
+                                            }
+                                        </div>
+                                    </CustomModal>
+
+                                </div>
+
 
                                 <CountDown endofAuction={new Date(item.ending_Date)} />
                             </>

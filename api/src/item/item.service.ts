@@ -18,7 +18,7 @@ export class ItemService {
     return item;
   }
 
-  async getItems(query: QueryItemDto) {
+  async getItems(isAdmin: boolean, query: QueryItemDto) {
     let { take, page, search, order, sort_by } = query;
     take = take || 10;
     page = page || 1;
@@ -26,7 +26,7 @@ export class ItemService {
 
     const skip = page && take ? take * (page - 1) : undefined;
 
-    const where: Prisma.ItemWhereInput = search
+    let where: Prisma.ItemWhereInput = search
       ? {
           OR: [
             {
@@ -44,6 +44,17 @@ export class ItemService {
           ],
         }
       : {};
+    const now = new Date();
+
+    // if user is not admin, show only items that are not ended yet
+    where =
+      isAdmin == false
+        ? {
+            ...where,
+            ending_Date: { gte: now },
+            starting_Date: { lte: now },
+          }
+        : where;
     const orderBy: Prisma.ItemOrderByWithAggregationInput = {
       [sort_by || "id"]: order || "asc",
     };

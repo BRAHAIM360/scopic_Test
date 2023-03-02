@@ -46,8 +46,8 @@ export class ItemController {
   @Get()
   @ApiOkResponse({ description: "The resource has been successfully returned" })
   @ApiBadRequestResponse({ description: "Bad Request" })
-  getItems(@Query() query: QueryItemDto) {
-    return this.itemService.getItems(query);
+  getItems(@GetIsAdmin() isAdmin: boolean, @Query() query: QueryItemDto) {
+    return this.itemService.getItems(isAdmin, query);
   }
 
   @Get(":id")

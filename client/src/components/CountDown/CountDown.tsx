@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { RootState, useAppSelector } from '../../store';
 import "./style.scss"
 
 interface CountDownProps {
@@ -25,24 +26,25 @@ export const CountDown = ({ endofAuction }: CountDownProps) => {
         }
     }, [])
 
+    const { darkTheme } = useAppSelector((state: RootState) => state.auth);
 
     return (
         <div id="countdown">
             <div className="number">
                 <span >{String(countDown.days).padStart(2, '0')}</span>
-                <span className="text">Days</span>
+                <span className="text" style={darkTheme ? { color: "white" } : {}}>Days</span>
             </div>
             <div className="number">
                 <span >{String(countDown.hours).padStart(2, '0')}</span>
-                <span className="text">Hours</span>
+                <span className="text" style={darkTheme ? { color: "white" } : {}}>Hours</span>
             </div>
             <div className="number">
                 <span >{String(countDown.minutes).padStart(2, '0')}</span>
-                <span className="text">Minutes</span>
+                <span className="text" style={darkTheme ? { color: "white" } : {}}>Minutes</span>
             </div>
             <div className="number">
                 <span >{String(countDown.seconds).padStart(2, '0')}</span>
-                <span className="text">Seconds</span>
+                <span className="text" style={darkTheme ? { color: "white" } : {}}>Seconds</span>
             </div>
         </div>
     )
