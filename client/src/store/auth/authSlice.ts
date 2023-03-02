@@ -14,6 +14,7 @@ const initialState = {
   isLoginSuccess: false,
   message: "",
   darkTheme: false,
+  username: user.username ? user.username : "",
 };
 
 // Login user
@@ -47,6 +48,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.message = "";
       state.darkTheme = false;
+      state.username = "";
     },
     logout: (state) => {
       localStorage.removeItem("user");

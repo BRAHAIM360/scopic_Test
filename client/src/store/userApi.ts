@@ -10,12 +10,9 @@ export const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    console.log("user is ", user);
-    console.log("headers are ", headers);
     if (user.access_token) {
       headers.set("authorization", `Bearer ${user.access_token}`);
     }
-    console.log(headers);
     return headers;
   },
 });

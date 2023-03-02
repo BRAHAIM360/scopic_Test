@@ -10,10 +10,12 @@ const login = async (userData: { username: string; password: string }) => {
   if (response.data) {
     // console.log('%c⧭', 'color: #00a3cc', response.data);
     const access_token: string = response.data.access_token;
-    const { isAdmin } = jwt_decode(access_token) as any;
+    const { isAdmin, username } = jwt_decode(access_token) as any;
+    console.log("%c⧭", "color: #00a3cc", isAdmin, username);
     const user = {
       access_token,
       isAdmin,
+      username,
     };
     localStorage.setItem("user", JSON.stringify(user));
   }

@@ -14,7 +14,7 @@ export interface itemInterface {
 export const itemApi = createApi({
   reducerPath: "item",
   baseQuery,
-  tagTypes: ["Items"],
+  tagTypes: ["item"],
   endpoints: (builder) => ({
     getItems: builder.query({
       query: (params = "") => `/items/${params}`,
@@ -22,7 +22,7 @@ export const itemApi = createApi({
 
     getItem: builder.query({
       query: (id) => `/items/${id}`,
-      providesTags: ["Items"],
+      providesTags: ["item"],
     }),
 
     addItem: builder.mutation({
@@ -33,7 +33,7 @@ export const itemApi = createApi({
           body: item,
         };
       },
-      invalidatesTags: ["Items"],
+      invalidatesTags: ["item"],
     }),
 
     updateItem: builder.mutation({
@@ -44,7 +44,7 @@ export const itemApi = createApi({
           body: item,
         };
       },
-      invalidatesTags: ["Items"],
+      invalidatesTags: ["item"],
     }),
 
     deleteItem: builder.mutation({
@@ -53,17 +53,39 @@ export const itemApi = createApi({
         method: `DELETE`,
         body: id,
       }),
-      invalidatesTags: ["Items"],
+      invalidatesTags: ["item"],
     }),
     deleteItems: builder.mutation({
       query: (items: number[]) => ({
         url: `/items/`,
         method: `DELETE`,
-        body: items,
+        body: { items },
       }),
-      invalidatesTags: ["Items"],
+      invalidatesTags: ["item"],
+    }),
+    addbid: builder.mutation({
+      query({ itemId, amount }: { itemId: number; amount: number }) {
+        return {
+          url: `/bid/${itemId}/`,
+          method: "POST",
+          body: { amount },
+        };
+      },
+      invalidatesTags: ["item"],
+    }),
+
+    autobidding: builder.mutation({
+      query({ itemId, state }: { itemId: number; state: boolean }) {
+        return {
+          url: `/bid/autobidding/${itemId}/`,
+          method: "PATCH",
+          body: { state },
+        };
+      },
+      invalidatesTags: ["item"],
     }),
   }),
+
   //to disable caching
   keepUnusedDataFor: 0,
 });
@@ -75,4 +97,6 @@ export const {
   useDeleteItemMutation,
   useUpdateItemMutation,
   useDeleteItemsMutation,
+  useAddbidMutation,
+  useAutobiddingMutation,
 } = itemApi;
