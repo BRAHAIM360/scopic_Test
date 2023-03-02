@@ -77,7 +77,7 @@ export class ItemService {
     return { items, pageinfo };
   }
   //
-  async getItem(itemId: number) {
+  async getItem(itemId: number, userId: number) {
     const item: any = await this.prisma.item.findUnique({
       where: {
         id: itemId,
@@ -87,13 +87,17 @@ export class ItemService {
           orderBy: { createdAt: "desc" },
           include: { user: { select: { username: true } } },
         },
+        autoBidingUsers: {
+          select: { id: true },
+        },
       },
     });
     if (!item) throw new BadRequestException("Item not found");
     if (item.bid.length > 0) {
       item.usernameLastBid = item.bid[0].user.username;
     }
-    delete item.bid;
+    item.isUserAutobidding = item.autoBidingUsers.some((user: any) => user.id === userId);
+    delete item.autoBidingUsers;
     return item;
   }
 
