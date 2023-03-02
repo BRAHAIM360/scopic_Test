@@ -15,9 +15,6 @@ Make sure you have:
 
 - [Git](https://git-scm.com/)
 - [docker](https://www.docker.com/products/docker-desktop)
-
-for development you need to also have
-
 - [Nodejs](https://nodejs.org/) version 14 or higher
 - [Yarn](https://yarnpkg.com/) version 1.4.2 or higher
 
@@ -28,31 +25,6 @@ for development you need to also have
 ```sh
  git clone https://github.com/BRAHAIM360/scopic_Test.git
 ```
-
-if you want try it in production mode
-
-- Go to the project root:
-
-```sh
-cd scopic_Test
-docker-compose up -d
-```
-
-The App will be available at <http://localhost:9000>
-the app container a creater user with the following credentials to login:
-username: user1
-password: user1
-
-username: user2
-password: user2
-
-username: admin1
-password: admin1
-
-username: admin2
-password: admin2
-
-if you want try it in development mode
 
 to start the backend
 make sure you have docker running
@@ -80,6 +52,19 @@ yarn dev // to start the frontend
 ```
 
 The frontend will be available at <http://localhost:3000>
+
+###for authentication I seeded the database with 4 users
+username: user1
+password: user1
+
+username: user2
+password: user2
+
+username: admin1
+password: admin1
+
+username: admin2
+password: admin2
 
 ## License
 

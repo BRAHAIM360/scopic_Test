@@ -1,12 +1,9 @@
-# Base image
-FROM node:18
+FROM node:16.16.0-alpine3.16 
 
 # Create app directory
 WORKDIR /app
 
 
-# Add missing package repository
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.14/main" > /etc/apk/repositories
 
 # Install required packages
 RUN apk update && apk add --no-cache git openssl libc6-compat
@@ -19,7 +16,7 @@ COPY prisma ./prisma/
 ENV SECRET "SuperSecret"
 
 # Install app dependencies
-RUN npm install --legacy-peer-deps
+RUN npm install 
 
 # Bundle app source
 COPY . .
