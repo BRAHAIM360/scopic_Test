@@ -12,7 +12,6 @@ You can find more about each folder by clicking on the folder name
 ### Perquisites
 
 Make sure you have:
-for production
 
 - [Git](https://git-scm.com/)
 - [docker](https://www.docker.com/products/docker-desktop)
@@ -40,10 +39,23 @@ docker-compose up -d
 ```
 
 The App will be available at <http://localhost:9000>
+the app container a creater user with the following credentials to login:
+username: user1
+password: user1
+
+username: user2
+password: user2
+
+username: admin1
+password: admin1
+
+username: admin2
+password: admin2
 
 if you want try it in development mode
 
 to start the backend
+make sure you have docker running
 
 - Go to the project api folder:
 

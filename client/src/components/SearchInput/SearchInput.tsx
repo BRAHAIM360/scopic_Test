@@ -1,4 +1,4 @@
-import { FormControl, InputAdornment, TextField, createStyles } from '@mui/material'
+import { FormControl, InputAdornment, TextField, createStyles, FormControlProps } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import React, { useState, useEffect } from 'react'
@@ -6,7 +6,7 @@ import "./style.scss"
 import { makeStyles } from '@mui/styles';
 
 
-interface SearchInputProps {
+interface SearchInputProps extends FormControlProps {
     searchText: string;
     setSearchText: (text: string) => void;
 }
