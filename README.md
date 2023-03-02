@@ -35,6 +35,7 @@ make sure you have docker running
 cd api
 yarn // to install the dependencies
 yarn db:dev:up // to start the database
+yarn prisma // to setup the database
 yarn start:dev // to start the backend
 ```
 
