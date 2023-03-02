@@ -6,6 +6,7 @@ import "./style.scss"
 import { CustomButton } from '../Button/Button';
 import { CustomTextField } from '../CustomTextField/CustomTextField';
 import { toast } from 'react-toastify';
+import { RootState, useAppSelector } from '../../store';
 
 interface DrawerProps extends React.HTMLAttributes<HTMLDivElement> {
     ButtonTriger: JSX.Element;
@@ -18,9 +19,9 @@ export const Drawer = ({ children, ButtonTriger }: DrawerProps) => {
     const [maxBid, setMaxBid] = React.useState(0);
     const [bidAlert, setBidAlert] = React.useState(0);
     const { data: meInfo } = useGetMeQuery("");
+    const { username } = useAppSelector((state: RootState) => state.auth);
 
     React.useEffect(() => {
-        console.log("meInfo", meInfo);
         if (meInfo) {
             setBidAmount(meInfo.bid_amount);
             setMaxBid(meInfo.max_bid);
@@ -56,7 +57,7 @@ export const Drawer = ({ children, ButtonTriger }: DrawerProps) => {
 
     const content = () => (
         <div className='drawer-container' >
-            <h1>Settings</h1>
+            <h1>Settings for {username}</h1>
             <CustomTextField sx={{}}
                 required
                 id="outlined-required"

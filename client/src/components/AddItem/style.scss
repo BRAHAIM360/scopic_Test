@@ -1,8 +1,9 @@
 .add-Item_container {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   flex-direction: column;
   gap: 20px;
-
-  padding: 10px;
+  overflow-y: auto;
+  padding: 20px;
+  height: 80vh;
 }

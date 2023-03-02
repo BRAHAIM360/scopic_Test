@@ -6,12 +6,13 @@ interface CustomSwitchProps {
   label: string;
   enbled: boolean;
   setEnbled: (enbled: boolean) => void;
+  onChange: () => void;
 }
 
-export const CustomSwitch = ({ label, enbled, setEnbled }: CustomSwitchProps) => {
+export const CustomSwitch = ({ label, enbled, setEnbled, onChange }: CustomSwitchProps) => {
   return (
     <FormGroup>
-      <FormControlLabel control={<Switch defaultChecked={enbled} onChange={() => setEnbled(!enbled)} />} label={label} />
+      <FormControlLabel control={<Switch checked={enbled} onChange={onChange} />} label={label} />
     </FormGroup>
   );
 };

@@ -58,7 +58,7 @@ export const DarkThemeTogle = () => {
     return (
         <DarkSwtich
             checked={darkTheme}
-            onChange={() => { console.log(darkTheme); dispatch(switchTheme()) }}
+            onChange={() => { dispatch(switchTheme()) }}
             name="darkTheme"
             inputProps={{ 'aria-label': 'controlled' }}
         />

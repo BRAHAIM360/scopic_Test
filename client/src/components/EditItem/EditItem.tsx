@@ -89,7 +89,7 @@ export const EditItem = ({ id }: AddItemProps) => {
             open={modalAdd}
             setOpen={setModalAdd}
         >
-            <div className="add-Item_container">
+            <div className="edit-Item_container" >
                 <h1>Edit Item</h1>
                 <TextField
                     required

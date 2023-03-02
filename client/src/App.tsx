@@ -28,7 +28,7 @@ function App() {
 
     <React.Suspense fallback={<div>Loading...</div>}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
+
         {isLogged
           ? <Routes>
             <Route path="/items/:id" element={<ItemDetails />} />

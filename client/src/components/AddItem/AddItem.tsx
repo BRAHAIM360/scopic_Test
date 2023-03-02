@@ -14,7 +14,7 @@ import axios from '../../helpers/axios';
 import { useAddItemMutation } from '../../store/itemApi';
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Paper, List } from '@mui/material'
 
 export const AddItem = () => {
     const [modalAdd, setModalAdd] = useState(false)
@@ -74,7 +74,7 @@ export const AddItem = () => {
             setOpen={setModalAdd}
         >
             <div className="add-Item_container">
-
+                <h1>Add Item</h1>
                 <TextField
                     required
                     id="outlined-required"
@@ -127,7 +127,6 @@ export const AddItem = () => {
                 </LocalizationProvider>
                 <FileUpload value={files} onChange={setFiles} title='Upload image' maxFiles={1} />
                 <CustomButton onClick={submitButton} >Submit</CustomButton>
-
             </div>
         </CustomModal>
     )

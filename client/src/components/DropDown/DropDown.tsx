@@ -11,9 +11,10 @@ const ITEM_HEIGHT = 48;
 
 interface DropDownProps {
     options: { name: string, action: () => void }[]
+    iconButton?: React.ReactNode
 };
 
-export const DropDown = ({ options }: DropDownProps) => {
+export const DropDown = ({ options, iconButton }: DropDownProps) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -27,6 +28,7 @@ export const DropDown = ({ options }: DropDownProps) => {
 
     return (
         <div>
+
             <IconButton
                 aria-label="more"
                 id="long-button"
