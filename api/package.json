@@ -14,7 +14,7 @@
     "prisma:generate": "npx prisma generate --schema ./prisma/schema.prisma",
     "prisma:migrate": "npx prisma migrate dev --schema ./prisma/schema.prisma",
     "prisma:seed": "npx prisma db seed",
-    "prisma": "yarn prisma:generate && yarn prisma:migrate && yarn prisma seed",
+    "prisma": "yarn prisma:generate && yarn prisma:migrate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
