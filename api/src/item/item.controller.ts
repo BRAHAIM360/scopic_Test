@@ -53,8 +53,8 @@ export class ItemController {
   @Get(":id")
   @ApiOkResponse({ description: "The resource has been successfully returned" })
   @ApiBadRequestResponse({ description: "Bad Request" })
-  async getItem(@Param("id", ParseIntPipe) itemId: number) {
-    return this.itemService.getItem(itemId);
+  async getItem(@Param("id", ParseIntPipe) itemId: number, @GetUserId() userId: number) {
+    return this.itemService.getItem(itemId, userId);
   }
 
   @Patch(":id")

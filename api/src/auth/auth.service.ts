@@ -32,7 +32,6 @@ export class AuthService {
       const tokens = await this.getTotken(user.id, user.username, user.isAdmin);
       return tokens;
     } catch (error) {
-      console.log(error);
       throw new ForbiddenException(error);
     }
   }

@@ -59,7 +59,7 @@ export class BidService {
     //start auto bidding bot
     this.autoBiddingBot(itemId);
 
-    return bid;
+    return { message: "Bid created" };
   }
 
   async autoBiddingEnabler(userId: number, itemId: number, dto: AutobiddingDto) {
@@ -69,14 +69,14 @@ export class BidService {
         data: { autoBidingUsers: { connect: { id: userId } } },
       });
       this.autoBiddingBot(itemId);
-      return { message: "Auto bidding enabled" };
+      return { message: "Auto bidding is enabled Successfully " };
     } else {
       await this.prisma.item.update({
         where: { id: itemId },
         data: { autoBidingUsers: { disconnect: { id: userId } } },
       });
 
-      return { message: "Auto bidding disabled" };
+      return { message: "Auto bidding is Successfully" };
     }
   }
 
