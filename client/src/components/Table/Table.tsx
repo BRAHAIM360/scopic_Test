@@ -106,7 +106,12 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
 
-
+    {
+        id: 'id',
+        numeric: false,
+        disablePadding: true,
+        label: 'id',
+    },
     {
         id: 'name',
         numeric: false,
@@ -143,6 +148,7 @@ const headCells: readonly HeadCell[] = [
         disablePadding: false,
         label: '',
     },
+
 ];
 
 interface EnhancedTableProps {
@@ -206,7 +212,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
-    selected?: number[];
+    selected: number[];
 }
 
 function EnhancedTableToolbar({ numSelected, selected }: EnhancedTableToolbarProps) {
@@ -215,21 +221,21 @@ function EnhancedTableToolbar({ numSelected, selected }: EnhancedTableToolbarPro
     const [deleteItems] = useDeleteItemsMutation();
 
     const OnSubmitDeleteItems = async () => {
-        // try {
+        try {
+            const responseFiles: any = await deleteItems(selected || [])
+            if (responseFiles.data) {
+                setOnDeleteMessageBox(false);
 
-        //     const responseFiles: any = await deleteItems(selected)
-        //     if (responseFiles.data) {
-        //         toast.success("Item deleted Successfully");
-        //         setOnDeleteMessageBox(false);
+                toast.success("Item deleted Successfully");
 
-        //     } else {
-        //         toast.error("Item Couldn't be deleted");
-        //     }
+            } else {
+                toast.error("Item Couldn't be deleted");
+            }
 
-        // } catch (error) {
-        //     toast.dismiss();
-        //     toast.error("Item Couldn't be deleted");
-        // }
+        } catch (error) {
+            toast.dismiss();
+            toast.error("Item Couldn't be deleted");
+        }
     }
 
     return (
@@ -288,28 +294,19 @@ function EnhancedTableToolbar({ numSelected, selected }: EnhancedTableToolbarPro
 export const TableItems = () => {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-    const [selected, setSelected] = React.useState<readonly number[]>([]);
+    const [selected, setSelected] = React.useState<number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const navigate = useNavigate();
-    // const rows: Data[] = [
-    //     createData(1, "item1", 1, 1, new Date(), new Date()),
-    //     createData(2, "item2", 2, 5, new Date(), new Date()),
-    //     createData(3, "item4", 3, 6, new Date(), new Date()),
-    //     createData(4, "item5", 6, 7, new Date(), new Date()),
-
-    // ];
     const [rows, setRows] = useState<Data[]>([]);
-    const [showImage, setShowImage] = useState(false);
-    const { data: items } = useGetItemsQuery("");
+    const { data: items, } = useGetItemsQuery("");
 
     useEffect(() => {
-        console.log(items)
         const ROWS: Data[] = [];
         if (items) {
-            items.items.map((item: any) => {
-                ROWS.push(createData(item.id, item.name, item.start_price, item.current_bid, new Date(item.starting_Date), new Date(item.endOfAuction), item.image));
+            items.items.forEach((item: any) => {
+                ROWS.push(createData(item.id, item.name, item.start_price, item.current_bid, new Date(item.starting_Date), new Date(item.ending_Date), item.image));
             });
         }
         setRows(ROWS);
@@ -380,7 +377,7 @@ export const TableItems = () => {
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
                 <ToastContainer />
-                <EnhancedTableToolbar numSelected={selected.length} />
+                <EnhancedTableToolbar selected={selected} numSelected={selected.length} />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -447,7 +444,7 @@ export const TableItems = () => {
                             {emptyRows > 0 && (
                                 <TableRow
                                     style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
+                                        height: 53 * emptyRows,
                                     }}
                                 >
                                     <TableCell colSpan={6} />

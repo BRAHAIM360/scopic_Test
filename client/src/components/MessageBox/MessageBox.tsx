@@ -64,7 +64,7 @@ export const MessageBox = ({ title, content, onSubmit, children, component }: Me
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleClose}>NO</Button>
-                                <Button onClick={onSubmit}>YES</Button>
+                                <Button onClick={() => { handleClose(); onSubmit && onSubmit() }}>YES</Button>
                             </DialogActions>
                         </>
                 }

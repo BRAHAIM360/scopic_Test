@@ -76,7 +76,6 @@ export const Home = () => {
     const [orderBy, setOrderBy] = useState({ sort_by: "id", order: "asc" });
     useEffect(() => {
         setQueryParams({ ...queryParams, ...orderBy });
-        console.log(queryParams)
     }, [orderBy]);
 
     const { data } = useGetItemsQuery(queryParamsString);
@@ -104,7 +103,7 @@ export const Home = () => {
                             { name: "by name asc", action: () => { setOrderBy({ sort_by: "name", order: "asc" }) } },
                             { name: "by name desc", action: () => { setOrderBy({ sort_by: "name", order: "desc" }) } },
                             { name: "by the current bid asc ", action: () => { setOrderBy({ sort_by: "current_bid", order: "asc" }) } },
-                            { name: "by the current bid des", action: () => { setOrderBy({ sort_by: "current_bid", order: "asc" }) } },
+                            { name: "by the current bid des", action: () => { setOrderBy({ sort_by: "current_bid", order: "desc" }) } },
                         ]} />
                     </div>
                 </div>

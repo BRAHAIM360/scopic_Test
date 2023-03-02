@@ -9,29 +9,37 @@ import Container from '@mui/material/Container';
 import "./style.scss"
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../helpers/axios';
+import { CountDown } from '../CountDown/CountDown';
+import CardHeader from '@mui/material/CardHeader';
 
 export interface ItemCardProps {
     id: number;
     name: string;
     description: string;
     image: string;
-    endOfAuction: Date;
+    ending_Date: Date;
     current_bid: number;
     buttonAction?: () => void;
 }
 
-export const ItemCard = ({ id, name, description, current_bid, endOfAuction, image, buttonAction }: ItemCardProps) => {
+export const ItemCard = ({ id, name, description, current_bid, ending_Date, image, buttonAction }: ItemCardProps) => {
     const navigate = useNavigate();
+    console.log(ending_Date)
     return (
         <Card sx={{ width: "400px", height: "500px", flex: "0 1 400px", cursor: "default", borderRadius: "10%" }}>
+
             <CardMedia
                 component="img"
                 height="50%"
                 image={BASE_URL + image}
-                alt="green iguana"
             />
             <CardContent  >
-                <Typography gutterBottom variant="h4" component="div" >
+                <Typography gutterBottom variant="h5" component="div" sx={{
+                    display: '-webkit-box',
+                    overflow: 'hidden',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 1,
+                }} >
                     {name}
                 </Typography>
                 <Typography gutterBottom variant="h5" component="div">
@@ -44,6 +52,9 @@ export const ItemCard = ({ id, name, description, current_bid, endOfAuction, ima
                     WebkitLineClamp: 1,
                 }}>
                     <strong>Description:</strong>  {description}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{
+                }}>
                 </Typography>
                 <Container maxWidth="sm" sx={{ display: "flex", justifyContent: "center", marginTop: '1rem' }}>
                     <Button variant="contained" onClick={() => navigate(`items/${id}`)}>Bid Now</Button>

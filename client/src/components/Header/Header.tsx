@@ -20,7 +20,7 @@ import { logout } from '../../store/auth/authSlice';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { Drawer } from '../Drawer/Drawer';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
-import { Badge } from '@mui/material';
+import { Badge, CssBaseline } from '@mui/material';
 import { NotificationMessage } from '../NotificationMessage/NotificationMessage';
 import { useGetNotificationQuery } from '../../store/userApi';
 import { DarkThemeTogle } from '../DarkThemeTogle/DarkThemeTogle';
@@ -52,6 +52,7 @@ export const Header = () => {
     const dispatch = useAppDispatch();
     return (
         <Box sx={{ flexGrow: 1 }}>
+            <CssBaseline />
             <AppBar position="static">
                 <Toolbar>
                     <Drawer
